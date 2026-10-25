@@ -1,0 +1,18 @@
+# secrets: never commit these
+.env
+**/.env
+# generated
+__pycache__/
+*.pyc
+flagging_model/flag_model.joblib
+offline_events.jsonl
+.vscode/
+
+# firmware secrets
+secrets.h
+
+# environments and builds
+venv/
+.venv/
+node_modules/
+dist/

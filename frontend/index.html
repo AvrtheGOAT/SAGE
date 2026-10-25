@@ -1,0 +1,492 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>SAGE | Family Dashboard</title>
+<script>
+  // Apply the saved theme (or the device setting) before anything paints, so there's no flash.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("sage-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script id="tailwind-config">
+  // Every colour is a CSS variable, so one class works in both light and dark mode.
+  const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+  if (window.tailwind) tailwind.config = {
+    theme: { extend: {
+      colors: {
+        canvas: v("canvas"), surface: v("surface"), inset: v("inset"), raise: v("raise"), line: v("line"),
+        ink: v("ink"), "ink-2": v("ink-2"), "ink-3": v("ink-3"),
+        accent: v("accent"), "on-accent": v("on-accent"), "on-status": v("on-status"),
+        ok: v("ok"), warn: v("warn"), danger: v("danger"), info: v("info"), "danger-solid": v("danger-solid"),
+        "ok-soft": "var(--ok-soft)", "warn-soft": "var(--warn-soft)", "danger-soft": "var(--danger-soft)",
+        "info-soft": "var(--info-soft)", "accent-soft": "var(--accent-soft)"
+      },
+      fontFamily: { sans: ["Inter", "system-ui", "sans-serif"], display: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"] },
+      // Major Second scale (1.125) for a data-dense dashboard. Body 16, secondary 14, meta 12 (the floor).
+      fontSize: {
+        xs: ["0.75rem", { lineHeight: "1.4" }], sm: ["0.875rem", { lineHeight: "1.5" }], base: ["1rem", { lineHeight: "1.55" }],
+        h4: ["1.125rem", { lineHeight: "1.25" }], h3: ["1.266rem", { lineHeight: "1.25" }], h2: ["1.424rem", { lineHeight: "1.2" }],
+        h1: ["1.802rem", { lineHeight: "1.15", letterSpacing: "-0.015em" }], metric: ["2.027rem", { lineHeight: "1.1", letterSpacing: "-0.02em" }]
+      }
+    } }
+  }
+</script>
+<style>
+  /* ---------- Colour tokens ----------
+     Dark: neutral graphite (no blue), one cyan accent from the Stitch design.
+     Light: soft grey canvas, white cards, a deeper cyan for contrast. All text pairs meet WCAG AA. */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --canvas: 14 15 16; --surface: 23 24 26; --inset: 18 19 21; --raise: 33 35 38; --line: 43 45 49;
+    --ink: 237 238 240; --ink-2: 172 177 184; --ink-3: 137 143 151;
+    --accent: 92 200 236; --on-accent: 6 30 41; --on-status: 14 15 16;
+    --ok: 104 212 152; --warn: 240 182 85; --danger: 244 138 118; --info: 124 200 238; --danger-solid: 212 56 40;
+    --ok-soft: rgba(104, 212, 152, 0.12); --warn-soft: rgba(240, 182, 85, 0.13); --danger-soft: rgba(244, 110, 90, 0.14);
+    --info-soft: rgba(124, 200, 238, 0.12); --accent-soft: rgba(92, 200, 236, 0.12);
+    --card-edge: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --canvas: 244 245 247; --surface: 255 255 255; --inset: 247 248 250; --raise: 236 239 242; --line: 225 229 234;
+    --ink: 22 24 27; --ink-2: 74 80 89; --ink-3: 104 111 121;
+    --accent: 3 116 158; --on-accent: 255 255 255; --on-status: 255 255 255;
+    --ok: 26 122 77; --warn: 150 88 10; --danger: 186 40 27; --info: 11 104 145; --danger-solid: 200 50 31;
+    --ok-soft: #e4f3ea; --warn-soft: #faefd9; --danger-soft: #fbe5e1; --info-soft: #e0f0f8; --accent-soft: #ddf0f8;
+    --card-edge: 0 1px 2px rgba(16, 24, 40, 0.05);
+  }
+  body { font-family: Inter, system-ui, sans-serif; font-size: 1rem; line-height: 1.55; font-variant-numeric: tabular-nums; }
+  h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif; font-weight: 600; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
+  .filled { font-variation-settings: 'FILL' 1; }
+  .card { background: rgb(var(--surface)); border: 1px solid rgb(var(--line)); border-radius: 0.75rem; box-shadow: var(--card-edge); }
+  .roadmap { position: relative; }
+  .roadmap .content { opacity: 0.3; filter: grayscale(0.6); pointer-events: none; }
+  .roadmap .veil { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1.5rem; text-align: center; }
+  @keyframes urgent-dot { 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: no-preference) { .urgent-dot { animation: urgent-dot 1.4s ease-in-out infinite; } }
+  :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+  #sidebar, header, footer, .card { transition: background-color 150ms, border-color 150ms; }
+</style>
+</head><body class="bg-canvas text-ink antialiased min-h-screen flex">
+
+<div id="backdrop" class="fixed inset-0 bg-black/60 z-40 hidden md:hidden"></div>
+
+<!-- ==================== SIDEBAR ====================
+     Desktop: a slim icon rail that expands over the page while the mouse (or keyboard focus) is on it.
+     Phone:   hidden; the menu button slides it in. -->
+<div class="hidden md:block w-[76px] shrink-0" aria-hidden="true"></div>
+<aside id="sidebar" class="group bg-surface border-line fixed inset-y-0 left-0 z-50 h-screen w-64 md:w-[76px] md:hover:w-64 md:focus-within:w-64 flex flex-col justify-between overflow-hidden border-r px-3 py-6 -translate-x-full md:translate-x-0 transition-all duration-200" aria-label="Sidebar">
+  <div class="flex flex-col gap-6 min-h-0">
+    <div class="flex items-center justify-between pl-1.5">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 shrink-0 rounded-lg bg-accent flex items-center justify-center text-on-accent">
+          <span class="material-symbols-outlined filled text-2xl">health_and_safety</span>
+        </div>
+        <div class="flex flex-col nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">
+          <span class="font-display text-h2 font-semibold tracking-tight leading-none text-ink">SAGE</span>
+          <span class=" text-ink-3 mt-1 text-xs">Caregiver hub</span>
+        </div>
+      </div>
+      <button id="menu-close" class="md:hidden p-2 rounded-lg text-ink-2 hover:bg-raise" aria-label="Close menu"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <nav aria-label="Main navigation" class="flex flex-col gap-1.5 text-sm overflow-y-auto overflow-x-hidden">
+      <a href="/patients" title="All people you look after" class="flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined">group</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">All people</span>
+      </a>
+      <div class="border-t border-line my-1"></div>
+      <a data-tab="overview" href="#overview" title="Overview" class="nav-link flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined nav-icon">dashboard</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Overview</span>
+      </a>
+      <a data-tab="vitals" href="#vitals" title="Vitals" class="nav-link flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined nav-icon">monitor_heart</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Vitals</span>
+      </a>
+      <a data-tab="reminders" href="#reminders" title="Reminders" class="nav-link flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined nav-icon">medication</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Reminders</span>
+      </a>
+      <a data-tab="memory" href="#memory" title="Memory & routine" class="nav-link flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined nav-icon">calendar_month</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Memory &amp; routine</span>
+      </a>
+      <a data-tab="alerts" href="#alerts" title="Alerts" class="nav-link flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined nav-icon">notifications_active</span><span id="nav-alert-count" class="hidden absolute -top-1.5 -right-2 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full bg-danger-solid text-white text-xs flex items-center justify-center font-semibold">0</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Alerts</span>
+      </a>
+      <a data-tab="location" href="#location" title="Location & home" class="nav-link flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined nav-icon">location_on</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Location &amp; home</span>
+      </a>
+      <a data-tab="reports" href="#reports" title="Reports" class="nav-link flex items-center gap-3 px-3 py-3 rounded-lg border-l-4 border-transparent text-ink-2 hover:bg-raise hover:text-ink">
+        <span class="relative shrink-0 w-6 flex justify-center"><span class="material-symbols-outlined nav-icon">description</span></span><span class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Reports</span>
+      </a>
+    </nav>
+  </div>
+
+  <div class="flex flex-col gap-3 pt-4 border-t border-line">
+    <button id="guardian-open" type="button" class="flex items-center gap-3 pl-1 py-1 rounded-lg text-left hover:bg-raise" title="Your profile and backup contact">
+      <span id="caregiver-initials" class="w-10 h-10 rounded-full border border-line bg-raise text-ink flex items-center justify-center font-semibold text-sm shrink-0">RD</span>
+      <div class="min-w-0 nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100"><div id="caregiver-name" class="text-sm font-semibold text-ink truncate">Rohan Deshpande</div><div id="caregiver-role" class="text-sm text-ink-2 truncate">Guardian</div></div>
+    </button>
+    <a id="call-contact" href="#" title="Call" class="w-full flex items-center gap-2 py-3 px-3 rounded-lg bg-danger-solid hover:bg-danger text-white text-sm font-semibold">
+      <span class="material-symbols-outlined filled text-xl shrink-0 w-6 text-center">call</span><span id="call-contact-label" class="nav-label whitespace-nowrap transition-opacity duration-150 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100">Call</span>
+    </a>
+  </div>
+</aside>
+
+<!-- ==================== MAIN ==================== -->
+<div class="flex-1 flex flex-col min-w-0">
+
+  <header class="bg-canvas border-line flex justify-between items-center w-full px-4 md:px-8 py-3.5 sticky top-0 z-30 border-b">
+    <div class="flex items-center gap-3 md:gap-4 min-w-0">
+      <button id="menu-btn" class="md:hidden p-2 -ml-2 rounded-lg text-ink-2 hover:bg-raise" aria-label="Open menu" aria-controls="sidebar" aria-expanded="false"><span class="material-symbols-outlined">menu</span></button>
+      <button id="patient-open" type="button" class="relative shrink-0 rounded-full" aria-label="Open Kamala's profile" title="Open profile">
+        <span id="resident-initials" class="w-11 h-11 md:w-12 md:h-12 rounded-full border-2 border-accent bg-raise text-accent flex items-center justify-center font-semibold text-lg">KD</span>
+        <span id="presence-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-ink-3 border-2 border-surface"></span>
+      </button>
+      <div class="min-w-0">
+        <p id="greeting" class="font-display text-h4 font-semibold text-ink truncate">Hello</p>
+        <div class="text-sm text-ink-2 flex items-center gap-2 mt-0.5 flex-wrap">
+          <a href="/patients" class="inline-flex items-center text-ink-3 hover:text-accent" title="Switch person" aria-label="Switch person"><span class="material-symbols-outlined text-lg">swap_horiz</span></a>
+          <button id="patient-name" type="button" class="font-medium text-ink hover:text-accent hover:underline underline-offset-4">Kamala</button>
+          <span id="status-badge"></span>
+          <span id="last-synced" class="hidden sm:inline">Waiting for data</span>
+          <span id="wearable-pill" class="hidden sm:inline-flex items-center gap-1 text-ink-3 font-medium"></span>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center gap-1 shrink-0">
+    <button id="sound-toggle" type="button" class="p-2.5 rounded-full text-ink-2 hover:bg-raise hover:text-ink" aria-pressed="true" aria-label="Turn off the alarm sound" title="Alarm sound on">
+      <span id="sound-icon" class="material-symbols-outlined text-2xl">volume_up</span>
+    </button>
+    <button id="theme-toggle" type="button" class="p-2.5 rounded-full text-ink-2 hover:bg-raise hover:text-ink" aria-label="Switch to light mode" title="Switch to light mode">
+      <span id="theme-icon" class="material-symbols-outlined text-2xl">light_mode</span>
+    </button>
+    <a href="#alerts" aria-label="View alerts" class="relative p-2.5 rounded-full text-ink-2 hover:bg-raise hover:text-ink shrink-0">
+      <span class="material-symbols-outlined text-2xl">notifications</span>
+      <span id="bell-count" class="hidden absolute top-1 right-1 min-w-[1.25rem] h-5 px-1 rounded-full bg-danger-solid text-white text-xs flex items-center justify-center font-semibold">0</span>
+    </a>
+    </div>
+  </header>
+
+  <main class="flex-1 px-4 md:px-8 py-6 max-w-[1440px] w-full mx-auto flex flex-col gap-6">
+    <h1 id="tab-title" class="font-display text-h1 font-semibold text-ink">Overview</h1>
+
+    <!-- URGENT ALERT BANNER (only shown for falls / help requests) -->
+    <div id="alert-banner" class="hidden w-full bg-danger-soft border-2 border-danger/40 rounded-xl p-5 flex-col md:flex-row items-start md:items-center justify-between gap-4" role="alert">
+      <div class="flex items-start gap-4">
+        <div class="urgent-dot w-12 h-12 rounded-xl bg-danger-solid text-white flex items-center justify-center shrink-0 mt-0.5"><span id="alert-icon" class="material-symbols-outlined filled text-2xl">personal_injury</span></div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class=" text-xs px-2 py-0.5 rounded bg-danger-solid text-white font-semibold border border-danger/40">Urgent</span>
+            <h2 id="alert-title" class="font-display text-h4 font-semibold text-ink tracking-tight">Fall detected</h2>
+          </div>
+          <p id="alert-desc" class="text-sm text-ink-2 mt-1">Waiting for a family member to respond.</p>
+          <p id="alert-countdown" class="text-sm font-medium text-danger mt-2"></p>
+          <ul id="alert-steps" class="text-sm text-ink-2 mt-1 flex flex-col gap-0.5"></ul>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 w-full md:w-auto shrink-0">
+        <a id="ambulance-link" href="tel:108" data-outcome="ambulance" class="alert-action flex items-center gap-2 px-5 py-3 rounded-lg bg-danger-solid text-white text-sm font-semibold hover:bg-danger border border-danger/40"><span class="material-symbols-outlined filled text-lg">call</span><span id="ambulance-label">Call ambulance (108)</span></a>
+        <button data-outcome="checking" class="alert-action flex items-center gap-2 px-4 py-3 rounded-lg bg-surface text-ink text-sm font-semibold border border-danger/40 hover:bg-danger-soft"><span class="material-symbols-outlined text-lg text-ok">check_circle</span>I'm checking on her</button>
+        <button data-outcome="false_alarm" class="alert-action px-3 py-3 rounded-lg text-danger hover:text-ink hover:bg-danger-soft text-sm">False alarm</button>
+      </div>
+    </div>
+
+
+    <!-- ===== TAB: OVERVIEW ===== -->
+    <section data-panel="overview" class="flex flex-col gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="card p-5 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-sm font-medium text-ink-2">Heart rate</span>
+          <span id="hr-badge"></span>
+        </div>
+        <div class="my-3 flex items-baseline gap-2"><span id="hr-value" class="font-display text-metric text-ink font-semibold">–</span><span class="text-sm text-ink-2">bpm</span></div>
+        <div class="w-full h-8 mb-2"><svg class="w-full h-full fill-none text-accent" preserveAspectRatio="none" viewBox="0 0 100 24"><path id="hr-spark" d="" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path></svg></div>
+        <div class="flex justify-between items-center text-xs text-ink-3 pt-2 border-t border-line"><span>Usual: 50–110 bpm</span><span id="hr-minmax">–</span></div>
+      </div>
+
+      <div class="card p-5 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-sm font-medium text-ink-2">Blood oxygen (SpO2)</span>
+          <span id="spo2-badge"></span>
+        </div>
+        <div class="my-3 flex items-baseline gap-2"><span id="spo2-value" class="font-display text-metric text-ink font-semibold">–</span><span class="text-sm text-ink-2">%</span></div>
+        <div class="w-full bg-inset rounded-full h-2 my-2 overflow-hidden border border-line"><div id="spo2-bar" class="bg-accent h-full rounded-full" style="width:0%"></div></div>
+        <div class="flex justify-between items-center text-xs text-ink-3 pt-2 border-t border-line"><span>Usual: 95% and above</span><span id="spo2-range">–</span></div>
+      </div>
+
+      <div class="card p-5 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-sm font-medium text-ink-2">Fall detection</span>
+          <span id="fall-badge"></span>
+        </div>
+        <div class="my-3 flex items-baseline gap-2"><span id="fall-value" class="font-display text-h2 text-ink font-semibold">–</span></div>
+        <p id="fall-desc" class="text-sm text-ink-2 mb-2">Sharp impact followed by stillness on the wearable's accelerometer.</p>
+        <div class="flex justify-between items-center text-xs text-ink-3 pt-2 border-t border-line"><span>Last fall alert</span><span id="fall-last">None</span></div>
+      </div>
+
+      <div class="card p-5 flex flex-col justify-between">
+        <div class="flex justify-between items-start">
+          <span class="text-sm font-medium text-ink-2">Medicines today</span>
+          <span id="ov-meds-badge"></span>
+        </div>
+        <div class="my-3 flex items-baseline gap-2"><span id="ov-meds-value" class="font-display text-metric text-ink font-semibold">–</span><span class="text-sm text-ink-2">taken</span></div>
+        <p id="ov-meds-sub" class="text-sm text-ink-2 mb-2">Confirmed by voice with SAGE.</p>
+        <div class="flex justify-between items-center text-xs text-ink-3 pt-2 border-t border-line"><span>Memory &amp; routine</span><a href="#memory" id="ov-mem" class="text-accent font-semibold hover:underline">–</a></div>
+      </div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-7 card p-6 flex flex-col">
+        <div class="flex items-center justify-between pb-3 border-b border-line"><h3 class="text-h4 font-semibold text-ink">Safety status</h3><span class="material-symbols-outlined text-ok">verified_user</span></div>
+        <div class="flex flex-col divide-y divide-line mt-2" id="safety-list"></div>
+      </div>
+      <div class="lg:col-span-5 card p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-line"><h3 class="text-h4 font-semibold text-ink">Devices</h3><span class="material-symbols-outlined text-ink-3">devices</span></div>
+          <div class="flex flex-col gap-3.5 mt-3 text-sm" id="device-list"></div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: VITALS ===== -->
+    <section data-panel="vitals" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-8 card p-6 flex flex-col">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-line gap-4">
+          <div><h3 class="text-h4 font-semibold text-ink">Vitals trend</h3><p class="text-sm text-ink-2">Live readings from the wearable</p></div>
+          <div class="flex items-center bg-inset p-1 rounded-lg border border-line text-xs font-semibold" role="group" aria-label="Choose metric">
+            <button data-metric="hr" class="metric-btn px-3 py-1.5 rounded text-sm bg-raise text-accent">Heart rate</button>
+            <button data-metric="spo2" class="metric-btn px-3 py-1.5 rounded text-sm text-ink-2 hover:text-ink">SpO2</button>
+          </div>
+        </div>
+        <div class="relative w-full h-64 mt-6"><canvas id="vitals-chart" aria-label="Vitals trend chart"></canvas>
+          <div id="chart-empty" class="absolute inset-0 flex items-center justify-center text-sm text-ink-3">Waiting for readings from the wearable</div>
+        </div>
+      </div>
+
+      <div class="card p-5 flex flex-col justify-between lg:col-span-4">
+        <div class="flex justify-between items-start">
+          <span class="text-sm font-medium text-ink-2">Glucose estimate</span>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-raise text-ink-2 text-xs font-semibold border border-line">Roadmap</span>
+        </div>
+        <div class="my-3 flex items-baseline gap-2"><span class="font-display text-metric text-ink-3 font-semibold">–</span><span class="text-sm text-ink-2">mg/dL</span></div>
+        <p class="text-sm text-ink-2 mb-2">Planned ML estimate from the PPG sensor. Not part of this prototype, and never a clinical reading.</p>
+        <div class="flex justify-between items-center text-xs text-ink-3 pt-2 border-t border-line"><span>Status</span><span>Not connected</span></div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: REMINDERS ===== -->
+    <section data-panel="reminders" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-12 card p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between pb-3 border-b border-line">
+            <div><h3 class="text-h4 font-semibold text-ink">Medicines today</h3><p class="text-sm text-ink-2">Confirmed by voice with SAGE</p></div>
+            <span id="meds-count" class=" text-xs font-semibold text-accent bg-info-soft border border-info/30 px-2.5 py-1 rounded">0/0 taken</span>
+          </div>
+          <div id="meds-list" class="relative pl-6 space-y-5 mt-4 before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-line"></div>
+        </div>
+        <div class="pt-3 mt-4 border-t border-line text-sm text-ink-2"><span id="meds-footer">Reminders are asked out loud; unanswered ones are retried, then shared with family.</span></div>
+      </div>
+
+    </section>
+
+    <!-- ===== TAB: MEMORY & ROUTINE ===== -->
+    <section data-panel="memory" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-8 card p-6">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-line">
+          <div><h3 class="text-h4 font-semibold text-ink">Reminder calendar</h3><p class="text-sm text-ink-2">Share of medicines and check-ins answered each day</p></div>
+          <div class="flex items-center gap-2">
+            <button id="cal-prev" class="p-2 rounded-lg border border-line text-ink-2 hover:text-ink hover:bg-raise disabled:opacity-30 disabled:pointer-events-none" aria-label="Previous month"><span class="material-symbols-outlined">chevron_left</span></button>
+            <span id="cal-title" class="min-w-[9.5rem] text-center font-semibold text-ink">–</span>
+            <button id="cal-next" class="p-2 rounded-lg border border-line text-ink-2 hover:text-ink hover:bg-raise disabled:opacity-30 disabled:pointer-events-none" aria-label="Next month"><span class="material-symbols-outlined">chevron_right</span></button>
+          </div>
+        </div>
+        <div class="grid grid-cols-7 gap-1.5 sm:gap-2 mt-4 text-center text-xs text-ink-3" aria-hidden="true">
+          <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+        </div>
+        <div id="cal-grid" class="grid grid-cols-7 gap-1.5 sm:gap-2 mt-2" role="grid" aria-label="Reminder calendar"></div>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 text-sm text-ink-2">
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-ok-soft border border-ok/40"></span>All answered</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-warn-soft border border-warn/40"></span>Some missed</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-danger-soft border border-danger/40"></span>Most missed</span>
+          <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border border-line"></span>No reminders</span>
+          <span id="cal-month-summary" class="sm:ml-auto font-semibold text-ink"></span>
+        </div>
+      </div>
+
+      <div class="lg:col-span-4 flex flex-col gap-6">
+        <div class="card p-6">
+          <div class="flex items-center justify-between pb-3 border-b border-line">
+            <h3 class="text-h4 font-semibold text-ink">Her pattern</h3>
+            <div class="text-right"><span id="cog-index" class="font-display text-h2 font-semibold text-ink">–</span><span class=" text-xs text-ink-3 block">Answered this week</span></div>
+          </div>
+          <div id="cog-flag" class="mt-4 p-3.5 rounded-lg bg-raise border border-line flex items-start gap-3">
+            <span id="cog-flag-icon" class="material-symbols-outlined text-ink-3 text-xl shrink-0 mt-0.5">info</span>
+            <div><h4 id="cog-flag-title" class="text-sm font-semibold text-ink-2">Building her baseline</h4><p id="cog-flag-text" class="text-sm text-ink-2 mt-0.5">The pattern appears once SAGE has a few weeks of reminder history.</p></div>
+          </div>
+          <p class="text-sm text-ink-2 mt-4">Missed reminders in the last 30 days: <strong id="cog-month" class="text-ink">–</strong></p>
+        </div>
+      </div>
+
+      <!-- Weekly analytics for the week of the selected date -->
+      <div class="lg:col-span-12 card p-6">
+        <div class="flex flex-wrap items-end justify-between gap-3 pb-4 border-b border-line">
+          <div><h3 id="wk-title" class="font-display text-h4 font-semibold text-ink">This week</h3>
+            <p class="text-sm text-ink-2">Reminders answered on time, late and missed each day, with her average reply time</p></div>
+        </div>
+        <div id="wk-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"></div>
+        <div class="relative w-full h-72 mt-5"><canvas id="week-chart" aria-label="Weekly reminder analytics chart"></canvas>
+          <div id="week-empty" class="hidden absolute inset-0 flex items-center justify-center text-sm text-ink-3">No reminders this week yet</div>
+        </div>
+      </div>
+
+      <!-- Everything about the date picked on the calendar -->
+      <div id="day-details" class="lg:col-span-12 card p-6 scroll-mt-24" tabindex="-1" aria-live="polite">
+        <div class="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-line">
+          <div><p class="text-sm text-ink-3">Day details</p><h3 id="dd-title" class="font-display text-h3 font-semibold text-ink">Today</h3></div>
+          <button id="dd-back" type="button" class="flex items-center gap-1 text-sm font-medium text-accent hover:underline"><span class="material-symbols-outlined text-lg">arrow_upward</span>Back to calendar</button>
+        </div>
+        <div id="dd-stats" class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+          <div class="lg:col-span-7">
+            <h4 class="font-display text-h4 font-semibold text-ink mb-3">Timeline</h4>
+            <ol id="dd-timeline" class="relative flex flex-col gap-4 pl-6 before:absolute before:left-[0.4rem] before:top-2 before:bottom-2 before:w-px before:bg-line"></ol>
+          </div>
+          <div class="lg:col-span-5">
+            <h4 class="font-display text-h4 font-semibold text-ink mb-3">Vitals that day</h4>
+            <div id="dd-vitals" class="flex flex-col gap-3"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TAB: ALERTS ===== -->
+    <section data-panel="alerts" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-12 card p-6 overflow-x-auto">
+        <div class="flex items-center justify-between pb-3 border-b border-line">
+          <div><h3 class="text-h4 font-semibold text-ink">Alert history</h3><p class="text-sm text-ink-2">Every alert and how the family responded</p></div>
+        </div>
+        <table class="w-full text-left text-xs mt-3 min-w-[550px]">
+          <thead><tr class="border-b border-line text-ink-3">
+            <th class="py-2.5 font-semibold">Time</th><th class="py-2.5 font-semibold">Alert</th><th class="py-2.5 font-semibold">Severity</th><th class="py-2.5 font-semibold">Family response</th><th class="py-2.5"></th>
+          </tr></thead>
+          <tbody id="alert-rows" class="divide-y divide-line"></tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ===== TAB: LOCATION & HOME ===== -->
+    <section data-panel="location" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-6 card p-6 roadmap">
+        <div class="content">
+          <div class="flex items-center justify-between pb-3 border-b border-line"><h3 class="text-h4 font-semibold text-ink">Safe zone</h3></div>
+          <div class="relative w-full h-40 bg-inset rounded-lg mt-4 border border-line flex items-center justify-center">
+            <div class="w-32 h-32 rounded-full border-2 border-accent bg-accent-soft flex items-center justify-center"><span class="material-symbols-outlined filled text-accent text-3xl">cottage</span></div>
+          </div>
+        </div>
+        <div class="veil"><div><span class="material-symbols-outlined text-accent text-3xl">location_on</span><p class="text-sm font-semibold text-ink mt-1">GPS safe zone</p><p class="text-sm text-ink-2 mt-1">Coming with the NEO-6M GPS module. Not connected in this prototype.</p></div></div>
+      </div>
+
+      <div class="lg:col-span-6 card p-6 roadmap">
+        <div class="content">
+          <div class="flex items-center justify-between pb-3 border-b border-line"><h3 class="text-h4 font-semibold text-ink">Home environment</h3></div>
+          <div class="flex flex-col divide-y divide-line text-xs mt-2"><div class="py-2.5">Gas (LPG)</div><div class="py-2.5">Smoke</div><div class="py-2.5">Temperature</div></div>
+        </div>
+        <div class="veil"><div><span class="material-symbols-outlined text-accent text-3xl">home</span><p class="text-sm font-semibold text-ink mt-1">Home unit</p><p class="text-sm text-ink-2 mt-1">Gas, smoke and temperature sensing is on the roadmap.</p></div></div>
+      </div>
+
+    </section>
+
+    <!-- ===== TAB: REPORTS ===== -->
+    <section data-panel="reports" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        <div class="card p-6">
+          <span class=" text-xs text-ink-3 block">Next half-yearly checkup</span>
+          <div id="checkup-due" class="text-h4 font-semibold text-ink mt-1">Add her last checkup report to see when the next one is due</div>
+          <div id="checkup-sub" class="text-sm text-ink-2 mt-1">SAGE reminds her every six months.</div>
+        </div>
+
+        <form id="report-form" class="card p-6 flex flex-col gap-4" novalidate>
+          <div class="pb-3 border-b border-line"><h3 class="text-h4 font-semibold text-ink">Add a previous report</h3><p class="text-sm text-ink-2">PDF or photo of a lab report, prescription or checkup summary (max 10 MB)</p></div>
+          <div class="flex flex-col gap-1.5">
+            <label for="report-file" class="text-xs font-semibold text-ink">Report file</label>
+            <input id="report-file" name="file" type="file" accept="application/pdf,image/*" required class="block w-full text-sm text-ink-2 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-raise file:text-accent file:font-semibold hover:file:bg-line cursor-pointer">
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="report-title" class="text-xs font-semibold text-ink">Title</label>
+            <input id="report-title" name="title" type="text" required placeholder="e.g. Full body checkup" class="rounded-lg bg-inset border border-line text-ink text-sm px-3 py-2 placeholder:text-ink-3 focus:border-accent focus:ring-0">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1.5">
+              <label for="report-date" class="text-xs font-semibold text-ink">Report date</label>
+              <input id="report-date" name="report_date" type="date" required class="rounded-lg bg-inset border border-line text-ink text-sm px-3 py-2 focus:border-accent focus:ring-0 [color-scheme:dark]">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="report-kind" class="text-xs font-semibold text-ink">Type</label>
+              <select id="report-kind" name="kind" class="rounded-lg bg-inset border border-line text-ink text-sm px-3 py-2 focus:border-accent focus:ring-0">
+                <option value="checkup">Full-body checkup</option><option value="lab">Lab test</option>
+                <option value="prescription">Prescription</option><option value="other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label for="report-notes" class="text-xs font-semibold text-ink">Notes <span class="font-normal text-ink-3">(optional)</span></label>
+            <textarea id="report-notes" name="notes" rows="2" placeholder="e.g. Doctor asked to recheck HbA1c in 3 months" class="rounded-lg bg-inset border border-line text-ink text-sm px-3 py-2 placeholder:text-ink-3 focus:border-accent focus:ring-0"></textarea>
+          </div>
+          <p id="report-msg" class="hidden text-xs" role="status"></p>
+          <button id="report-submit" type="submit" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-accent text-on-accent text-sm font-semibold hover:brightness-110 disabled:opacity-50">
+            <span class="material-symbols-outlined text-base">upload_file</span>Upload report
+          </button>
+        </form>
+      </div>
+
+      <div class="lg:col-span-7 card p-6">
+        <div class="flex items-center justify-between pb-3 border-b border-line">
+          <div><h3 class="text-h4 font-semibold text-ink">Medical records</h3><p class="text-sm text-ink-2">Newest first, by report date</p></div>
+          <span class="material-symbols-outlined text-ink-3">folder_shared</span>
+        </div>
+        <div id="report-list" class="flex flex-col gap-2 mt-4"></div>
+        <p class="text-xs text-ink-3 mt-4">Prototype note: anyone who can open this dashboard can see these files. Family-only login is on the roadmap.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-canvas border-line w-full py-6 px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left border-t mt-10">
+    <div class="flex flex-col gap-1">
+      <p class="text-sm text-ink-2 font-medium">Privacy first: SAGE never records or stores audio or video.</p>
+      <p class="text-xs text-ink-3">Readings help the family decide and are not a medical diagnosis.</p>
+    </div>
+    <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface border border-line">
+      <span id="footer-dot" class="w-2 h-2 rounded-full bg-ink-3"></span><span id="footer-text" class=" text-xs text-ink font-semibold">Connecting…</span>
+    </div>
+  </footer>
+</div>
+
+
+<!-- Profile slide-over (patient / guardian) -->
+<div id="panel-scrim" class="fixed inset-0 z-[200] bg-black/50 hidden"></div>
+<aside id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" aria-hidden="true"
+  class="fixed inset-y-0 right-0 z-[210] w-full max-w-md bg-surface border-l border-line flex flex-col translate-x-full transition-transform duration-200 invisible">
+  <div class="flex items-center justify-between gap-3 px-6 py-4 border-b border-line">
+    <div class="min-w-0"><p id="panel-kicker" class="text-sm text-ink-3">Profile</p><h2 id="panel-title" class="font-display text-h3 font-semibold text-ink truncate">Profile</h2></div>
+    <button id="panel-close" type="button" class="p-2 rounded-lg text-ink-2 hover:bg-raise" aria-label="Close profile"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div id="panel-body" class="flex-1 overflow-y-auto px-6 py-5"></div>
+  <div id="panel-foot" class="px-6 py-4 border-t border-line flex flex-wrap gap-3 justify-end"></div>
+</aside>
+
+<div id="toast" class="hidden fixed bottom-6 right-6 left-6 sm:left-auto z-[400] sm:max-w-sm card p-4 items-start gap-3" role="status" aria-live="polite">
+  <span id="toast-icon" class="material-symbols-outlined text-ok">check_circle</span>
+  <p id="toast-text" class="text-sm text-ink flex-1"></p>
+  <button id="toast-close" type="button" class="p-1 -m-1 rounded text-ink-3 hover:text-ink" aria-label="Dismiss"><span class="material-symbols-outlined text-lg">close</span></button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/sage_live.js') }}"></script>
+</body></html>

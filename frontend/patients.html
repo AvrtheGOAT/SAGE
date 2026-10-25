@@ -1,0 +1,225 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>SAGE | Your elders</title>
+<script>
+  // Apply the saved theme (or the device setting) before anything paints, so there's no flash.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("sage-theme"); } catch (e) {}
+    if (t !== "light" && t !== "dark") t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@500;600&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script id="tailwind-config">
+  // Every colour is a CSS variable, so one class works in both light and dark mode.
+  const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+  if (window.tailwind) tailwind.config = {
+    theme: { extend: {
+      colors: {
+        canvas: v("canvas"), surface: v("surface"), inset: v("inset"), raise: v("raise"), line: v("line"),
+        ink: v("ink"), "ink-2": v("ink-2"), "ink-3": v("ink-3"),
+        accent: v("accent"), "on-accent": v("on-accent"), "on-status": v("on-status"),
+        ok: v("ok"), warn: v("warn"), danger: v("danger"), info: v("info"), "danger-solid": v("danger-solid"),
+        "ok-soft": "var(--ok-soft)", "warn-soft": "var(--warn-soft)", "danger-soft": "var(--danger-soft)",
+        "info-soft": "var(--info-soft)", "accent-soft": "var(--accent-soft)"
+      },
+      fontFamily: { sans: ["Inter", "system-ui", "sans-serif"], display: ["Plus Jakarta Sans", "Inter", "system-ui", "sans-serif"] },
+      // Major Second scale (1.125) for a data-dense dashboard. Body 16, secondary 14, meta 12 (the floor).
+      fontSize: {
+        xs: ["0.75rem", { lineHeight: "1.4" }], sm: ["0.875rem", { lineHeight: "1.5" }], base: ["1rem", { lineHeight: "1.55" }],
+        h4: ["1.125rem", { lineHeight: "1.25" }], h3: ["1.266rem", { lineHeight: "1.25" }], h2: ["1.424rem", { lineHeight: "1.2" }],
+        h1: ["1.802rem", { lineHeight: "1.15", letterSpacing: "-0.015em" }], metric: ["2.027rem", { lineHeight: "1.1", letterSpacing: "-0.02em" }]
+      }
+    } }
+  }
+</script>
+<style>
+  /* ---------- Colour tokens ----------
+     Dark: neutral graphite (no blue), one cyan accent from the Stitch design.
+     Light: soft grey canvas, white cards, a deeper cyan for contrast. All text pairs meet WCAG AA. */
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --canvas: 14 15 16; --surface: 23 24 26; --inset: 18 19 21; --raise: 33 35 38; --line: 43 45 49;
+    --ink: 237 238 240; --ink-2: 172 177 184; --ink-3: 137 143 151;
+    --accent: 92 200 236; --on-accent: 6 30 41; --on-status: 14 15 16;
+    --ok: 104 212 152; --warn: 240 182 85; --danger: 244 138 118; --info: 124 200 238; --danger-solid: 212 56 40;
+    --ok-soft: rgba(104, 212, 152, 0.12); --warn-soft: rgba(240, 182, 85, 0.13); --danger-soft: rgba(244, 110, 90, 0.14);
+    --info-soft: rgba(124, 200, 238, 0.12); --accent-soft: rgba(92, 200, 236, 0.12);
+    --card-edge: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --canvas: 244 245 247; --surface: 255 255 255; --inset: 247 248 250; --raise: 236 239 242; --line: 225 229 234;
+    --ink: 22 24 27; --ink-2: 74 80 89; --ink-3: 104 111 121;
+    --accent: 3 116 158; --on-accent: 255 255 255; --on-status: 255 255 255;
+    --ok: 26 122 77; --warn: 150 88 10; --danger: 186 40 27; --info: 11 104 145; --danger-solid: 200 50 31;
+    --ok-soft: #e4f3ea; --warn-soft: #faefd9; --danger-soft: #fbe5e1; --info-soft: #e0f0f8; --accent-soft: #ddf0f8;
+    --card-edge: 0 1px 2px rgba(16, 24, 40, 0.05);
+  }
+  body { font-family: Inter, system-ui, sans-serif; font-size: 1rem; line-height: 1.55; font-variant-numeric: tabular-nums; }
+  h1, h2, h3, h4 { font-family: "Plus Jakarta Sans", Inter, system-ui, sans-serif; font-weight: 600; }
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; display: inline-block; vertical-align: middle; line-height: 1; }
+  .filled { font-variation-settings: 'FILL' 1; }
+  .card { background: rgb(var(--surface)); border: 1px solid rgb(var(--line)); border-radius: 0.75rem; box-shadow: var(--card-edge); }
+  .roadmap { position: relative; }
+  .roadmap .content { opacity: 0.3; filter: grayscale(0.6); pointer-events: none; }
+  .roadmap .veil { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 1.5rem; text-align: center; }
+  @keyframes urgent-dot { 50% { opacity: 0.35; } }
+  @media (prefers-reduced-motion: no-preference) { .urgent-dot { animation: urgent-dot 1.4s ease-in-out infinite; } }
+  :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+  #sidebar, header, footer, .card { transition: background-color 150ms, border-color 150ms; }
+</style>
+</head>
+<body class="bg-canvas text-ink antialiased min-h-screen flex flex-col">
+<header class="border-b border-line">
+  <div class="max-w-6xl mx-auto w-full px-4 md:px-8 py-4 flex items-center justify-between gap-4">
+    <a href="/patients" class="flex items-center gap-3">
+      <span class="w-10 h-10 rounded-lg bg-accent text-on-accent flex items-center justify-center"><span class="material-symbols-outlined filled text-2xl">health_and_safety</span></span>
+      <span class="font-display text-h4 font-semibold">SAGE</span>
+    </a>
+    <div class="flex items-center gap-1">
+      <button id="theme-toggle" type="button" class="p-2.5 rounded-full text-ink-2 hover:bg-raise hover:text-ink" aria-label="Switch theme"><span id="theme-icon" class="material-symbols-outlined text-2xl">light_mode</span></button>
+      <button id="sign-out" type="button" class="ml-1 px-3 py-2 rounded-lg text-sm font-medium text-ink-2 hover:bg-raise hover:text-ink">Sign out</button>
+    </div>
+  </div>
+</header>
+
+<main class="flex-1 max-w-6xl mx-auto w-full px-4 md:px-8 py-10">
+  <p id="greeting" class="text-sm text-ink-3">Hello</p>
+  <h1 class="font-display text-h1 font-semibold mt-1">Who are you looking after?</h1>
+  <p class="text-base text-ink-2 mt-2 max-w-2xl">Choose a person to open their dashboard. Each has their own band, voice assistant, reminders and memory model.</p>
+
+  <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-8" aria-live="polite">
+    <div class="card p-6 h-48 animate-pulse"></div>
+  </div>
+  <p id="load-error" class="hidden mt-6 text-sm text-danger" role="alert"></p>
+</main>
+
+<!-- Add an elder -->
+<div id="add-scrim" class="fixed inset-0 z-40 bg-black/50 hidden"></div>
+<div id="add-dialog" role="dialog" aria-modal="true" aria-labelledby="add-title" class="fixed z-50 inset-x-4 top-[8vh] mx-auto max-w-lg card p-6 hidden">
+  <div class="flex items-start justify-between gap-3">
+    <div><h2 id="add-title" class="font-display text-h3 font-semibold">Add someone you look after</h2>
+      <p class="text-sm text-ink-2 mt-1">You can fill in their health details later from their profile.</p></div>
+    <button id="add-close" type="button" class="p-2 -m-2 rounded-lg text-ink-2 hover:bg-raise" aria-label="Close"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <form id="add-form" class="flex flex-col gap-4 mt-5" novalidate>
+    <div class="flex flex-col gap-1.5"><label for="f-name" class="text-sm font-medium">Full name</label>
+      <input id="f-name" name="name" autocomplete="off" class="rounded-lg bg-inset border border-line text-ink px-3 py-2.5 focus:border-accent focus:ring-0"></div>
+    <div class="grid grid-cols-2 gap-3">
+      <div class="flex flex-col gap-1.5"><label for="f-pref" class="text-sm font-medium">Called <span class="font-normal text-ink-3">(optional)</span></label>
+        <input id="f-pref" name="preferred_name" placeholder="e.g. Aaji" class="rounded-lg bg-inset border border-line text-ink px-3 py-2.5 placeholder:text-ink-3 focus:border-accent focus:ring-0"></div>
+      <div class="flex flex-col gap-1.5"><label for="f-dob" class="text-sm font-medium">Date of birth <span class="font-normal text-ink-3">(optional)</span></label>
+        <input id="f-dob" name="dob" type="date" class="rounded-lg bg-inset border border-line text-ink px-3 py-2.5 focus:border-accent focus:ring-0"></div>
+    </div>
+    <details class="text-sm">
+      <summary class="cursor-pointer text-ink-2 hover:text-ink">Device IDs <span class="text-ink-3">(filled in automatically if left empty)</span></summary>
+      <div class="grid grid-cols-2 gap-3 mt-3">
+        <div class="flex flex-col gap-1.5"><label for="f-wear" class="text-sm font-medium">Band ID</label>
+          <input id="f-wear" name="wearable_id" placeholder="wearable2" class="rounded-lg bg-inset border border-line text-ink px-3 py-2.5 placeholder:text-ink-3 focus:border-accent focus:ring-0"></div>
+        <div class="flex flex-col gap-1.5"><label for="f-voice" class="text-sm font-medium">Voice device ID</label>
+          <input id="f-voice" name="voice_id" placeholder="sage-home-02" class="rounded-lg bg-inset border border-line text-ink px-3 py-2.5 placeholder:text-ink-3 focus:border-accent focus:ring-0"></div>
+      </div>
+      <p class="text-xs text-ink-3 mt-2">The band's firmware sends its ID as device_id, and the voice assistant uses DEVICE_ID in voice\.env.</p>
+    </details>
+    <p id="add-error" class="hidden text-sm text-danger" role="alert"></p>
+    <div class="flex justify-end gap-3 mt-1">
+      <button id="add-cancel" type="button" class="px-4 py-2 rounded-lg text-sm font-medium text-ink-2 hover:bg-raise">Cancel</button>
+      <button id="add-save" type="submit" class="px-4 py-2 rounded-lg bg-accent text-on-accent text-sm font-medium hover:brightness-110 disabled:opacity-50">Add person</button>
+    </div>
+  </form>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const initials = (n) => (n || "?").split(" ").filter(Boolean).map((p) => p[0]).join("").slice(0, 2).toUpperCase();
+function ageFrom(dob) { if (!dob) return null; const d = new Date(dob + "T00:00:00"), n = new Date(); let a = n.getFullYear() - d.getFullYear();
+  if (n.getMonth() < d.getMonth() || (n.getMonth() === d.getMonth() && n.getDate() < d.getDate())) a--; return a; }
+function ago(iso) { const s = Math.max(0, Math.round((Date.now() - new Date(iso)) / 1000));
+  return s < 60 ? `${s}s ago` : s < 3600 ? `${Math.round(s / 60)} min ago` : s < 86400 ? `${Math.round(s / 3600)} h ago` : `${Math.round(s / 86400)} days ago`; }
+async function api(url, opts = {}) { const r = await fetch(url, { cache: "no-store", ...opts }); if (r.status === 401) { location.href = "/login"; throw new Error("signed out"); } return r; }
+
+const TONE = { danger: "bg-danger-soft text-danger border-danger/40", warn: "bg-warn-soft text-warn border-warn/40",
+  ok: "bg-ok-soft text-ok border-ok/35", muted: "bg-raise text-ink-2 border-line" };
+function statusOf(st) {
+  const live = st.last_reading && Date.now() - new Date(st.last_reading) < 60000;
+  if (st.urgent) return ["danger", "Needs help now", "An alert is waiting for a family response"];
+  if (st.open_alerts) return ["warn", "Needs attention", `${st.open_alerts} alert${st.open_alerts > 1 ? "s" : ""} to review`];
+  if (live) return ["ok", "All good", `Band live${st.heart_rate ? ` · ${st.heart_rate} bpm` : ""}`];
+  return ["muted", "Band offline", st.last_reading ? `Last reading ${ago(st.last_reading)}` : "No readings yet"];
+}
+
+async function load() {
+  try {
+    const list = await (await api("/api/patients")).json();
+    $("load-error").classList.add("hidden");
+    $("cards").innerHTML = list.map((p) => {
+      const [tone, label, sub] = statusOf(p.status), age = ageFrom(p.dob);
+      const cond = (p.conditions || "").split(/[,\n]/).map((c) => c.trim()).filter(Boolean);
+      return `<a href="/?p=${esc(p.id)}" class="card p-6 flex flex-col gap-5 hover:border-accent focus-visible:border-accent transition-colors group ${tone === "danger" ? "ring-2 ring-danger/50" : ""}">
+        <div class="flex items-start justify-between gap-3">
+          <span class="w-14 h-14 rounded-full border-2 border-accent bg-raise text-accent flex items-center justify-center font-semibold text-h4">${esc(initials(p.name))}</span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border whitespace-nowrap ${TONE[tone]}">
+            <span class="w-1.5 h-1.5 rounded-full ${tone === "danger" ? "bg-danger urgent-dot" : tone === "warn" ? "bg-warn" : tone === "ok" ? "bg-ok" : "bg-ink-3"}"></span>${label}</span>
+        </div>
+        <div>
+          <div class="font-display text-h3 font-semibold group-hover:text-accent">${esc(p.name)}</div>
+          <div class="text-sm text-ink-2 mt-0.5">${age != null ? `${age} years` : "Age not added"}${cond.length ? ` · ${esc(cond[0])}${cond.length > 1 ? ` +${cond.length - 1}` : ""}` : ""}</div>
+        </div>
+        <div class="flex items-center justify-between gap-3 pt-4 border-t border-line text-sm">
+          <span class="text-ink-2">${esc(sub)}</span>
+          <span class="flex items-center gap-1 text-accent font-medium">Open<span class="material-symbols-outlined text-lg">arrow_forward</span></span>
+        </div>
+      </a>`;
+    }).join("") + `<button id="add-open" type="button" class="card p-6 min-h-[12rem] border-dashed flex flex-col items-center justify-center gap-2 text-ink-2 hover:text-accent hover:border-accent transition-colors">
+        <span class="material-symbols-outlined text-3xl">person_add</span><span class="font-medium">Add someone you look after</span></button>`;
+    $("add-open").onclick = openAdd;
+  } catch (e) {
+    if (e.message !== "signed out") { $("load-error").textContent = "Can't reach the SAGE server. Check that app.py is running."; $("load-error").classList.remove("hidden"); }
+  }
+}
+
+let lastFocus = null;
+function openAdd() { lastFocus = document.activeElement; $("add-form").reset(); $("add-error").classList.add("hidden");
+  $("add-scrim").classList.remove("hidden"); $("add-dialog").classList.remove("hidden"); $("f-name").focus(); }
+function closeAdd() { $("add-scrim").classList.add("hidden"); $("add-dialog").classList.add("hidden"); if (lastFocus) lastFocus.focus(); }
+$("add-close").onclick = closeAdd; $("add-cancel").onclick = closeAdd; $("add-scrim").onclick = closeAdd;
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("add-dialog").classList.contains("hidden")) closeAdd(); });
+$("add-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(e.currentTarget).entries());
+  if (!data.name.trim()) { $("add-error").textContent = "Add their name."; $("add-error").classList.remove("hidden"); $("f-name").focus(); return; }
+  $("add-save").disabled = true;
+  try {
+    const r = await api("/api/patients", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+    const body = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(body.error || "Couldn't add them. Try again.");
+    closeAdd(); await load();
+  } catch (err) { $("add-error").textContent = err.message; $("add-error").classList.remove("hidden"); }
+  $("add-save").disabled = false;
+});
+
+function applyTheme(t, save) {
+  document.documentElement.setAttribute("data-theme", t);
+  $("theme-icon").textContent = t === "dark" ? "light_mode" : "dark_mode";
+  $("theme-toggle").setAttribute("aria-label", `Switch to ${t === "dark" ? "light" : "dark"} mode`);
+  if (save) { try { localStorage.setItem("sage-theme", t); } catch {} }
+}
+$("theme-toggle").onclick = () => applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark", true);
+applyTheme(document.documentElement.getAttribute("data-theme"), false);
+$("sign-out").onclick = async () => { await fetch("/api/auth/logout", { method: "POST" }).catch(() => {}); location.href = "/login"; };
+
+(async () => {
+  try { const me = await (await api("/api/me")).json(); const h = new Date().getHours();
+    $("greeting").textContent = `${h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening"}${me?.name ? `, ${me.name.split(" ")[0]}` : ""}`; } catch {}
+  load(); setInterval(load, 5000);
+})();
+</script>
+</body></html>

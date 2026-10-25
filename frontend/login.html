@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0e0f10">
+  <title>SAGE — Care that stays close</title>
+  <meta name="description" content="A simple wearable and family dashboard to help families stay close to the everyday moments that matter.">
+  <script>(function(){var t=null;try{t=localStorage.getItem("sage-theme")}catch(e){}
+    if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";
+    document.documentElement.setAttribute("data-theme",t)})();</script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: dark; --canvas:14 15 16; --surface:23 24 26; --line:43 45 49; --ink:237 238 240; --ink-2:172 177 184; --ink-3:137 143 151; --accent:92 200 236; --on-accent:6 30 41; --danger:244 138 118; --ok:104 212 152; }
+    html[data-theme="light"] { color-scheme:light; --canvas:244 245 247; --surface:255 255 255; --line:225 229 234; --ink:22 24 27; --ink-2:74 80 89; --ink-3:104 111 121; --accent:3 116 158; --on-accent:255 255 255; --danger:186 40 27; --ok:26 122 77; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:rgb(var(--canvas)); color:rgb(var(--ink)); font-family:'Inter',sans-serif; font-size:16px; line-height:1.6; transition:background-color .25s,color .25s; }
+    h1,h2,h3,.brand { font-family:'Plus Jakarta Sans',sans-serif; letter-spacing:-.035em; }
+    button,input { font:inherit; }
+    button,a,input { -webkit-tap-highlight-color:transparent; }
+    a { color:inherit; }
+    :focus-visible { outline:3px solid rgb(var(--accent)); outline-offset:3px; }
+    .wrap { width:min(1120px,calc(100% - 48px)); margin-inline:auto; }
+    .topbar { height:76px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid rgb(var(--line)); }
+    .brand { display:flex; align-items:center; gap:11px; font-size:19px; font-weight:600; letter-spacing:.12em; }
+    .brand-mark { width:31px;height:31px; display:grid;place-items:center;border:1px solid rgb(var(--line));border-radius:11px;color:rgb(var(--accent)); }
+    .brand-mark svg { width:19px;height:19px; }
+    .top-actions { display:flex;align-items:center;gap:12px; }
+    .quiet-link { text-decoration:none;color:rgb(var(--ink-2));font-size:14px; }
+    .theme-toggle { border:1px solid rgb(var(--line)); background:rgb(var(--surface)); color:rgb(var(--ink)); border-radius:999px; min-width:44px;min-height:44px; display:grid;place-items:center;cursor:pointer; }
+    .theme-toggle svg { width:18px;height:18px; }
+    .hero { min-height:610px; display:grid;grid-template-columns:1.08fr .92fr;gap:76px;align-items:center;padding:58px 0 72px; }
+    .eyebrow { display:flex;align-items:center;gap:9px;color:rgb(var(--ink-2));font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase; }
+    .eyebrow-dot { width:7px;height:7px;background:rgb(var(--ok));border-radius:50%; }
+    .hero h1 { font-size:clamp(42px,5.2vw,66px);line-height:1.08;font-weight:600;max-width:610px;margin:20px 0 20px; }
+    .hero h1 span { color:rgb(var(--ink-2)); }
+    .hero-copy { max-width:490px;color:rgb(var(--ink-2));font-size:17px;line-height:1.75;margin:0; }
+    .assurance { display:flex;align-items:center;gap:9px;margin-top:24px;color:rgb(var(--ink-3));font-size:13px; }
+    .assurance svg { width:17px;height:17px;color:rgb(var(--ok));flex:none; }
+    .visual { position:relative;min-height:315px;display:flex;align-items:center;justify-content:center; }
+    .orbit { position:absolute;width:310px;height:310px;border-radius:50%;border:1px solid rgb(var(--line)); }
+    .orbit:before,.orbit:after { content:"";position:absolute;border:1px solid rgb(var(--line));border-radius:50%;inset:28px; }
+    .orbit:after { inset:59px; }
+    .device { z-index:1;width:156px;height:210px;border-radius:46px;padding:13px 14px;background:linear-gradient(145deg,rgb(var(--surface)),rgb(var(--canvas)));border:1px solid rgb(var(--line));box-shadow:0 22px 60px rgba(0,0,0,.18);transform:rotate(-8deg); }
+    .device-band { height:100%;border-radius:36px;border:1px solid rgb(var(--line));display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgb(var(--surface)); }
+    .device-face { width:80px;height:80px;border-radius:28px;background:rgb(var(--canvas));border:1px solid rgb(var(--line));display:grid;place-items:center;color:rgb(var(--accent));animation:soft-pulse 4s ease-in-out infinite; }
+    .device-face svg { width:39px;height:39px; }
+    .device-caption { font-size:10px;letter-spacing:.12em;color:rgb(var(--ink-3));text-transform:uppercase; }
+    .float-card { position:absolute;z-index:2;background:rgb(var(--surface));border:1px solid rgb(var(--line));border-radius:14px;padding:13px 15px;box-shadow:0 12px 32px rgba(0,0,0,.12); }
+    .float-card.top { top:37px;right:4px; }
+    .float-card.bottom { bottom:32px;left:2px; }
+    .float-label { display:flex;align-items:center;gap:8px;font-size:12px;color:rgb(var(--ink-2)); }
+    .float-label svg { width:16px;height:16px;color:rgb(var(--ok)); }
+    .float-value { font-size:14px;font-weight:500;margin-top:5px; }
+    .auth-card { background:rgb(var(--surface));border:1px solid rgb(var(--line));border-radius:20px;padding:30px;box-shadow:0 18px 50px rgba(0,0,0,.08); }
+    .auth-kicker { color:rgb(var(--ink-3));font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;margin:0 0 9px; }
+    #auth-title { font-size:26px;line-height:1.2;font-weight:600;margin:0 0 9px; }
+    #auth-sub { font-size:13px;line-height:1.65;color:rgb(var(--ink-2));margin:0 0 23px; }
+    #auth-form label { display:block;font-size:13px;font-weight:500;margin:0 0 7px; }
+    #auth-form input { width:100%;height:48px;border-radius:10px;border:1px solid rgb(var(--line));background:rgb(var(--canvas));color:rgb(var(--ink));padding:0 13px;margin:0 0 17px; }
+    #auth-form input::placeholder { color:rgb(var(--ink-3)); }
+    #auth-form input:focus { border-color:rgb(var(--accent));outline:3px solid rgb(var(--accent) / .2); }
+    #name-row { flex-direction:column; }
+    .hidden { display:none !important; }
+    #pw-hint { font-size:12px;color:rgb(var(--ink-3));margin:-9px 0 14px; }
+    #auth-error { color:rgb(var(--danger));font-size:13px;margin:0 0 14px; }
+    #auth-submit { width:100%;min-height:48px;border:0;border-radius:10px;background:rgb(var(--accent));color:rgb(var(--on-accent));font-weight:500;cursor:pointer;transition:filter .2s,transform .2s; }
+    #auth-submit:hover { filter:brightness(1.08);transform:translateY(-1px); }
+    #auth-submit:disabled { opacity:.65;cursor:wait;transform:none; }
+    .form-note { margin:15px 0 0;text-align:center;color:rgb(var(--ink-3));font-size:12px; }
+    .section { padding:82px 0;border-top:1px solid rgb(var(--line)); }
+    .section-heading { max-width:590px;margin:0 auto 42px;text-align:center; }
+    .section-heading h2 { font-size:clamp(29px,4vw,42px);line-height:1.18;font-weight:600;margin:11px 0 13px; }
+    .section-heading p { color:rgb(var(--ink-2));margin:0; }
+    .story-grid { display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center; }
+    .story-art { min-height:280px;border:1px solid rgb(var(--line));border-radius:22px;background:rgb(var(--surface));display:grid;place-items:center;position:relative;overflow:hidden; }
+    .story-art:before,.story-art:after { content:"";position:absolute;border:1px solid rgb(var(--line));border-radius:50%;width:210px;height:210px; }
+    .story-art:after { width:150px;height:150px; }
+    .story-house { position:relative;z-index:1;width:78px;height:78px;border-radius:25px;background:rgb(var(--canvas));border:1px solid rgb(var(--line));display:grid;place-items:center;color:rgb(var(--accent)); }
+    .story-house svg { width:38px;height:38px; }
+    .story-copy h2 { font-size:34px;line-height:1.2;margin:0 0 18px;font-weight:600; }
+    .story-copy p { color:rgb(var(--ink-2));margin:0 0 14px; }
+    .story-note { padding-left:15px;border-left:2px solid rgb(var(--accent));color:rgb(var(--ink));font-size:14px; }
+    .features { display:grid;grid-template-columns:repeat(3,1fr);gap:14px; }
+    .feature { padding:22px;border:1px solid rgb(var(--line));background:rgb(var(--surface));border-radius:16px;min-height:185px; }
+    .feature-icon { width:38px;height:38px;border-radius:12px;background:rgb(var(--canvas));display:grid;place-items:center;color:rgb(var(--accent));margin-bottom:17px; }
+    .feature-icon svg { width:19px;height:19px; }
+    .feature h3 { font-size:16px;font-weight:600;margin:0 0 8px;letter-spacing:-.02em; }
+    .feature p { font-size:13px;color:rgb(var(--ink-2));margin:0;line-height:1.65; }
+    .steps { display:grid;grid-template-columns:repeat(3,1fr);gap:20px;counter-reset:step; }
+    .step { border-top:1px solid rgb(var(--line));padding:20px 8px 0 0; }
+    .step-number { color:rgb(var(--accent));font-size:12px;letter-spacing:.12em;font-weight:500; }
+    .step h3 { font-size:20px;font-weight:600;margin:12px 0 8px;letter-spacing:-.025em; }
+    .step p { color:rgb(var(--ink-2));font-size:14px;margin:0; }
+    .privacy-box { display:grid;grid-template-columns:1fr 1fr;gap:45px;align-items:center;background:rgb(var(--surface));border:1px solid rgb(var(--line));border-radius:20px;padding:38px; }
+    .privacy-box h2 { font-size:32px;line-height:1.2;margin:10px 0 12px;font-weight:600; }
+    .privacy-box p { color:rgb(var(--ink-2));margin:0; }
+    .privacy-points { display:grid;gap:15px; }
+    .privacy-point { display:flex;gap:12px;align-items:flex-start;font-size:14px;color:rgb(var(--ink-2)); }
+    .privacy-point svg { flex:none;width:18px;height:18px;color:rgb(var(--ok));margin-top:2px; }
+    .footer { border-top:1px solid rgb(var(--line));padding:28px 0 36px;display:flex;align-items:center;justify-content:space-between;gap:20px;color:rgb(var(--ink-3));font-size:12px; }
+    .footer strong { font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.12em;color:rgb(var(--ink-2)); }
+    @keyframes soft-pulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.035); } }
+    @media (max-width:900px) { .hero { gap:36px; }.wrap{width:min(100% - 40px,720px)}.features{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:680px) {
+      .wrap{width:calc(100% - 36px)}.topbar{height:66px}.quiet-link{display:none}
+      .hero{display:flex;flex-direction:column;align-items:stretch;gap:22px;padding:30px 0 55px;min-height:0}
+      .auth-card{order:-1;padding:23px;border-radius:17px}.auth-kicker{margin-bottom:7px}#auth-title{font-size:23px}
+      .hero-copy{font-size:16px}.hero h1{font-size:42px;margin:13px 0}.visual{min-height:270px;margin-top:4px}.orbit{width:260px;height:260px}
+      .device{transform:scale(.88) rotate(-8deg)}.float-card.top{top:25px;right:0}.float-card.bottom{bottom:17px;left:0}
+      .section{padding:61px 0}.section-heading{margin-bottom:30px}.story-grid{grid-template-columns:1fr;gap:26px}.story-art{min-height:220px;order:2}.story-copy h2{font-size:30px}
+      .features{grid-template-columns:1fr 1fr;gap:10px}.feature{padding:17px;min-height:0}.feature h3{font-size:15px}.feature p{font-size:12px}
+      .steps{grid-template-columns:1fr;gap:22px}.step{padding-top:14px}.step h3{margin-top:7px}
+      .privacy-box{grid-template-columns:1fr;padding:25px;gap:23px}.privacy-box h2{font-size:28px}.footer{align-items:flex-start;flex-direction:column;gap:10px}
+    }
+    @media (max-width:390px) { .wrap{width:calc(100% - 28px)}.auth-card{padding:19px}.hero h1{font-size:38px}.features{grid-template-columns:1fr}.feature{padding:18px} }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after{scroll-behavior:auto !important;animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important} }
+  </style>
+</head>
+<body>
+  <header class="wrap topbar">
+    <a class="brand" href="#top" aria-label="SAGE home">
+      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20s-7-4.2-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.8-7 10-7 10Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8 12h2l1.1-2.2 2 4.4 1.1-2.2H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>SAGE
+    </a>
+    <div class="top-actions"><a class="quiet-link" href="#how-it-works">How it works</a><button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme"><svg id="theme-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></button></div>
+  </header>
+  <main id="top">
+    <section class="wrap hero" aria-labelledby="hero-title">
+      <div class="hero-copy-block">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> A little more peace of mind</div>
+        <h1 id="hero-title">Care that stays close.<br><span>Even from afar.</span></h1>
+        <p class="hero-copy">SAGE helps families stay in the loop with a simple wristband and a thoughtful family dashboard—so everyday care feels a little less far away.</p>
+        <div class="assurance"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> About ₹2,000 for the hardware. No subscription.</div>
+        <div class="visual" aria-label="Illustration of a SAGE wristband with a heart-rate display">
+          <div class="orbit" aria-hidden="true"></div>
+          <div class="device"><div class="device-band"><div class="device-face"><svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><path d="M4 20h7l4-9 7 18 5-12 3 3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="device-caption">SAGE band</span></div></div>
+          <div class="float-card top"><div class="float-label"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Morning check-in</div><div class="float-value">All is well</div></div>
+          <div class="float-card bottom"><div class="float-label"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.6-7 10-7 10Z" stroke="currentColor" stroke-width="1.8"/></svg> Heart rate</div><div class="float-value">A trend, not a diagnosis</div></div>
+        </div>
+      </div>
+      <aside class="auth-card" aria-label="Family account sign in">
+        <p class="auth-kicker">Your family dashboard</p>
+        <form id="auth-form" novalidate>
+          <h1 id="auth-title">Sign in</h1>
+          <p id="auth-sub">Only family members you've added can see your loved one's health information.</p>
+          <div id="name-row" class="hidden"><label for="name">Your name</label><input id="name" autocomplete="name"></div>
+          <label for="email">Email</label><input id="email" type="email" autocomplete="email">
+          <label for="password">Password</label><input id="password" type="password" autocomplete="current-password">
+          <p id="pw-hint" class="hidden">At least 8 characters.</p>
+          <p id="auth-error" class="hidden" role="alert"></p>
+          <button id="auth-submit" type="submit">Sign in</button>
+          <p class="form-note">Private to the family you invite.</p>
+        </form>
+      </aside>
+    </section>
+    <section class="section" id="story">
+      <div class="wrap story-grid">
+        <div class="story-copy"><div class="eyebrow"><span class="eyebrow-dot"></span> Made for the in-between moments</div><h2>For the days you can't be right there.</h2><p>Kamala is 78 and lives alone. Her son Rohan wants to know she's doing okay, without making every day feel like a check-up.</p><p>SAGE quietly helps them stay connected: a gentle check-in, a reminder, and a family update when something seems out of the ordinary for Kamala.</p><div class="story-note">Supportive, not intrusive. Family stays in control.</div></div>
+        <div class="story-art" aria-hidden="true"><div class="story-house"><svg viewBox="0 0 40 40" fill="none"><path d="m7 19 13-11 13 11v13H7V19Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M16 32v-9h8v9M11 20h4m10 0h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></div></div>
+      </div>
+    </section>
+    <section class="section" id="features">
+      <div class="wrap"><div class="section-heading"><div class="eyebrow" style="justify-content:center"><span class="eyebrow-dot"></span> What SAGE can do</div><h2>Quiet support, when it matters.</h2><p>Useful signals and simple ways to stay connected—without pretending to replace a doctor.</p></div>
+        <div class="features">
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4.5 6v5c0 5 3.2 8.3 7.5 10 4.3-1.7 7.5-5 7.5-10V6L12 3Z" stroke="currentColor" stroke-width="1.7"/><path d="m8.5 12 2.2 2.2 4.8-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Fall detection</h3><p>The band looks for impact followed by stillness and sounds a siren on the band.</p></article>
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.6-7 10-7 10Z" stroke="currentColor" stroke-width="1.7"/><path d="M12 8v5m-2.5-2.5h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>SOS, with a safety net</h3><p>One press starts a 5-second cancel window, then alerts family. If nobody responds, it escalates to a backup contact, then emergency services. Family decides first.</p></article>
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h3l2-5 4 10 3-7 2 4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Everyday health trends</h3><p>Live heart rate and blood oxygen (SpO2) from the band, for trends and alerts—not diagnosis.</p></article>
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H18a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 17.5v-12Z" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h5m-5 4h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>Hindi + English voice help</h3><p>A bilingual voice assistant offers medicine reminders and a friendly morning check-in.</p></article>
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 18V6m0 12h16M7 15l4-4 3 2 5-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="19" cy="7" r="1.5" fill="currentColor"/></svg></div><h3>Changes from their usual</h3><p>Notices routine changes, like missed reminders or slower replies, and suggests mentioning them to a doctor. It never diagnoses dementia.</p></article>
+          <article class="feature"><div class="feature-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H18a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 17.5v-12Z" stroke="currentColor" stroke-width="1.7"/><path d="M8 8h8M8 12h8m-8 4h5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div><h3>Plain words, past weeks</h3><p>An AI care agent explains changes to family in plain language and remembers previous weeks. One account can look after several elders.</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="how-it-works">
+      <div class="wrap"><div class="section-heading"><div class="eyebrow" style="justify-content:center"><span class="eyebrow-dot"></span> Simple by design</div><h2>How it works</h2><p>A small, steady presence in the background of family life.</p></div>
+        <div class="steps"><article class="step"><div class="step-number">01 / WEAR</div><h3>Wear the band</h3><p>Your loved one wears a simple wristband that can notice a fall, track health trends, and offer reminders.</p></article><article class="step"><div class="step-number">02 / QUIETLY</div><h3>SAGE watches quietly</h3><p>It follows the agreed signals and usual routines, without recording or storing audio.</p></article><article class="step"><div class="step-number">03 / TOGETHER</div><h3>Family is told what matters</h3><p>Family gets useful alerts and clear context in the dashboard, with the choice of what to do next.</p></article></div>
+      </div>
+    </section>
+    <section class="section" id="privacy">
+      <div class="wrap"><div class="privacy-box"><div><div class="eyebrow"><span class="eyebrow-dot"></span> Privacy, by default</div><h2>Care without listening in.</h2><p>SAGE is designed to support family care while respecting the person wearing the band.</p></div><div class="privacy-points"><div class="privacy-point"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Audio is never recorded or stored.</span></div><div class="privacy-point"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Only useful events, like “medicine taken,” are saved.</span></div><div class="privacy-point"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Family decides first if an SOS alert needs escalation.</span></div><div class="privacy-point"><svg viewBox="0 0 24 24" fill="none"><path d="m5 12 4 4L19 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>About ₹2,000 hardware cost. No subscription.</span></div></div></div></div>
+    </section>
+  </main>
+  <footer class="wrap footer"><strong>SAGE</strong><span>Thoughtful support for the people who matter most.</span><span>Health trends and alerts are not a diagnosis.</span></footer>
+  <script>
+  const $ = (id) => document.getElementById(id);
+  let setup = false;
+  function showError(msg) { $("auth-error").textContent = msg; $("auth-error").classList.toggle("hidden", !msg); }
+  fetch("/api/auth/status").then((r) => r.json()).then((s) => {
+    setup = s.needs_setup;
+    if (!setup) return;
+    $("auth-title").textContent = "Create the family account";
+    $("auth-sub").textContent = "This is the first time SAGE is being set up. The account you create here signs in to the dashboard.";
+    $("name-row").classList.replace("hidden", "flex");
+    $("pw-hint").classList.remove("hidden");
+    $("password").autocomplete = "new-password";
+    $("auth-submit").textContent = "Create account";
+  }).catch(() => showError("Can't reach the SAGE server. Check that app.py is running."));
+  $("auth-form").addEventListener("submit", async (e) => {
+    e.preventDefault(); showError("");
+    const body = { email: $("email").value.trim(), password: $("password").value };
+    if (setup) body.name = $("name").value.trim();
+    if (setup && !body.name) return showError("Enter your name."), $("name").focus();
+    if (!body.email) return showError("Enter your email address."), $("email").focus();
+    if (!body.password) return showError("Enter your password."), $("password").focus();
+    if (setup && body.password.length < 8) return showError("Use a password of at least 8 characters."), $("password").focus();
+    $("auth-submit").disabled = true;
+    try {
+      const r = await fetch(setup ? "/api/auth/setup" : "/api/auth/login",
+        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || "Couldn't sign in. Try again.");
+      location.href = "/patients";
+    } catch (err) { showError(err.message); $("auth-submit").disabled = false; }
+  });
+  </script>
+  <script>
+    (function(){var b=document.getElementById('theme-toggle');var i=document.getElementById('theme-icon');function draw(){var dark=document.documentElement.getAttribute('data-theme')==='dark';b.setAttribute('aria-label',dark?'Switch to light theme':'Switch to dark theme');i.innerHTML=dark?'<path d="M20.5 15.5A8.5 8.5 0 0 1 8.5 3.5 8.5 8.5 0 1 0 20.5 15.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>':'<circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.7"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>'}b.addEventListener('click',function(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('sage-theme',t)}catch(e){}draw()});draw()})();
+  </script>
+</body>
+</html>
