@@ -1,7 +1,7 @@
-/* Hallmark · shape: app screen · genre: editorial · theme: custom (Hue: sage-design, "Letter from home") · redesign: full
- * paper: oklch(96% 0.012 85) · accent: oklch(45% 0.13 265) · display: Newsreader · body: Hanken Grotesk
+/* Hallmark · shape: app screen · genre: atmospheric · theme: custom (Hue: sage-design, "Night garden", after ZeBeyond by Phenomenon Studio) · redesign: retheme
+ * canvas: night green / mint paper · accent: mint oklch(83% 0.17 160), coral second accent · display: Plus Jakarta Sans · body: Hanken Grotesk
  * nav: kept (icon rail, expands on hover) · signature: the "Right now" note about Kamala that leads Overview · states: loading, empty, offline, urgent
- * axes: warm-paper/text-serif/ink-blue · posture: calm surface, urgent payload · contrast: pass · v2.0.0 */
+ * axes: night-green/geometric-sans/mint-glow · posture: bright surface, urgent payload · contrast: pass (AA checked per token pair) · v2.0.0 */
 /* Hallmark · dropped #tailwind-config (inline Tailwind config moved to js/tw-config.js, shared by all pages) */
 /* Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V4 · weakest: P, a dashboard argues little; made the screen lead with the person's state in a sentence instead of four stat cards */
 
@@ -9,20 +9,21 @@
    Colours are RGB triplets so Tailwind can add alpha: rgb(var(--accent) / .2) */
 :root, :root[data-theme="light"] {
   color-scheme: light;
-  --canvas: 246 242 234; --surface: 255 253 248; --inset: 251 248 242; --raise: 239 233 222;
-  --line: 227 220 207; --line-strong: 207 198 182;
-  --ink: 35 32 27; --ink-2: 87 81 74; --ink-3: 107 100 90; --ink-4: 207 198 182;
-  --accent: 45 79 158; --accent-hover: 36 66 134; --on-accent: 255 251 245; --on-solid: 255 251 245; --on-status: 255 251 245;
-  --ok: 59 117 73; --warn: 143 87 11; --danger: 179 38 30; --info: 45 79 158; --danger-solid: 179 38 30; --danger-solid-hover: 150 30 24;
-  --ok-soft: rgb(227 238 226); --warn-soft: rgb(246 233 210); --danger-soft: rgb(247 224 219); --info-soft: rgb(228 234 247); --accent-soft: rgb(228 234 247);
-  --scrim: 23 21 19;
-  --shadow-card: 0 1px 2px rgb(60 44 20 / .05), 0 4px 16px -8px rgb(60 44 20 / .10);
-  --shadow-overlay: 0 24px 48px -16px rgb(60 44 20 / .25);
+  --canvas: 244 250 247; --surface: 253 255 254; --inset: 238 247 243; --raise: 230 243 238;
+  --line: 218 234 227; --line-strong: 186 210 201;
+  --ink: 8 28 23; --ink-2: 52 79 71; --ink-3: 78 104 96; --ink-4: 186 210 201;
+  --accent: 4 122 86; --accent-hover: 3 100 70; --on-accent: 250 255 252; --on-solid: 250 255 252; --on-status: 250 255 252;
+  --accent-2: 194 65 32; --glow: 16 185 129; --glow-2: 45 212 191;
+  --ok: 20 120 57; --warn: 150 90 6; --danger: 200 30 60; --info: 3 105 161; --danger-solid: 200 30 60; --danger-solid-hover: 170 24 50;
+  --ok-soft: rgb(220 247 231); --warn-soft: rgb(254 243 199); --danger-soft: rgb(255 228 232); --info-soft: rgb(224 242 254); --accent-soft: rgb(209 245 230);
+  --scrim: 4 12 10;
+  --shadow-card: 0 1px 2px rgb(8 40 30 / .05), 0 8px 24px -12px rgb(8 40 30 / .14);
+  --shadow-overlay: 0 24px 48px -16px rgb(8 40 30 / .28);
 
-  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-display: "Plus Jakarta Sans", "Hanken Grotesk", system-ui, sans-serif;
   --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
 
-  --radius-element: 4px; --radius-control: 8px; --radius-component: 14px; --radius-container: 20px; --radius-pill: 999px;
+  --radius-element: 4px; --radius-control: 10px; --radius-component: 16px; --radius-container: 24px; --radius-pill: 999px;
   --ease: cubic-bezier(0.2, 0, 0, 1); --dur-micro: 160ms; --dur-short: 240ms;
   --space-2xs: 2px; --space-xs: 4px; --space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px; --space-3xl: 64px; --space-4xl: 96px;
 
@@ -31,18 +32,35 @@
   --color-ink: rgb(var(--ink)); --color-ink-2: rgb(var(--ink-2)); --color-muted: rgb(var(--ink-3));
   --color-rule: rgb(var(--line)); --color-accent: rgb(var(--accent)); --color-accent-ink: rgb(var(--on-accent)); --color-focus: rgb(var(--accent));
 }
-:root[data-theme="dark"] {
+/* Dark tokens. .stage reuses them so the sign-in hero is the glowing night panel in either theme. */
+:root[data-theme="dark"], :root .stage {
   color-scheme: dark;
-  --canvas: 23 21 19; --surface: 32 29 26; --inset: 27 25 22; --raise: 42 38 34;
-  --line: 54 49 44; --line-strong: 74 68 61;
-  --ink: 239 234 225; --ink-2: 185 177 166; --ink-3: 150 141 129; --ink-4: 107 100 90;
-  --accent: 157 182 242; --accent-hover: 204 216 241; --on-accent: 20 33 63; --on-status: 23 21 19;
-  --ok: 134 199 154; --warn: 227 174 91; --danger: 240 144 127; --info: 157 182 242; --danger-solid: 192 53 42; --danger-solid-hover: 168 44 34;
-  --ok-soft: rgb(134 199 154 / .12); --warn-soft: rgb(227 174 91 / .13); --danger-soft: rgb(240 144 127 / .14);
-  --info-soft: rgb(157 182 242 / .13); --accent-soft: rgb(157 182 242 / .13);
+  --canvas: 7 15 13; --surface: 13 24 21; --inset: 10 20 17; --raise: 22 36 32;
+  --line: 30 48 43; --line-strong: 48 72 65;
+  --ink: 236 246 242; --ink-2: 168 190 183; --ink-3: 126 150 142; --ink-4: 78 100 93;
+  --accent: 52 230 160; --accent-hover: 120 242 192; --on-accent: 3 33 22; --on-solid: 250 255 252; --on-status: 7 15 13;
+  --accent-2: 255 138 101; --glow: 16 185 129; --glow-2: 45 212 191;
+  --ok: 74 222 128; --warn: 251 191 36; --danger: 255 125 140; --info: 94 200 250; --danger-solid: 220 38 74; --danger-solid-hover: 190 24 60;
+  --ok-soft: rgb(var(--ok) / .13); --warn-soft: rgb(var(--warn) / .13); --danger-soft: rgb(var(--danger) / .14);
+  --info-soft: rgb(var(--info) / .13); --accent-soft: rgb(var(--accent) / .13);
   --scrim: 0 0 0;
-  --shadow-card: none; --shadow-overlay: 0 24px 48px -16px rgb(0 0 0 / .6);
+  --shadow-card: 0 0 0 1px rgb(var(--ink) / .02), 0 12px 32px -16px rgb(var(--scrim) / .7); --shadow-overlay: 0 24px 48px -16px rgb(var(--scrim) / .7);
+  --color-paper: rgb(var(--canvas)); --color-paper-2: rgb(var(--surface)); --color-paper-3: rgb(var(--raise));
+  --color-ink: rgb(var(--ink)); --color-ink-2: rgb(var(--ink-2)); --color-muted: rgb(var(--ink-3));
+  --color-rule: rgb(var(--line)); --color-accent: rgb(var(--accent)); --color-accent-ink: rgb(var(--on-accent)); --color-focus: rgb(var(--accent));
 }
+
+/* App glow: the sign-in stage's mint light and faint grid, kept soft behind the dashboard and people list. */
+.app-glow { position: relative; isolation: isolate; }
+.app-glow::before, .app-glow::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+.app-glow::before { background: radial-gradient(45% 45% at 85% 8%, rgb(var(--glow) / .16), transparent 70%), radial-gradient(30% 35% at 20% 100%, rgb(var(--glow-2) / .08), transparent 70%); }
+.app-glow::after {
+  background-image: linear-gradient(rgb(var(--ink) / .035) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--ink) / .035) 1px, transparent 1px);
+  background-size: 64px 64px; mask-image: radial-gradient(60% 50% at 80% 0%, currentColor, transparent 80%);
+}
+
+/* Tailwind's font-display class only sets the family; give it the display weight too. */
+.font-display { font-weight: 700; letter-spacing: -0.02em; }
 
 /* ============ Base (the Hallmark Floor) ============ */
 *, *::before, *::after { box-sizing: border-box; }
@@ -57,8 +75,8 @@ body {
 :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
 h1, h2, h3, h4 {
-  margin: 0; font-family: var(--font-display); font-weight: 500; font-optical-sizing: auto;
-  font-synthesis: none; overflow-wrap: break-word; min-width: 0; text-wrap: balance; letter-spacing: -0.005em;
+  margin: 0; font-family: var(--font-display); font-weight: 700; font-optical-sizing: auto;
+  font-synthesis: none; overflow-wrap: break-word; min-width: 0; text-wrap: balance; letter-spacing: -0.025em;
 }
 p { text-wrap: pretty; }
 button, input, select, textarea { font: inherit; }
@@ -66,9 +84,9 @@ button, input, select, textarea { font: inherit; }
 .num { font-variant-numeric: tabular-nums; }
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 
-/* Icons: Material Symbols at a lighter weight, closer to the serif's hairlines */
+/* Icons: Material Symbols, weight matched to the sans */
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   display: inline-block; vertical-align: middle; line-height: 1; user-select: none;
 }
 .filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
