@@ -1,0 +1,183 @@
+/* Hallmark · shape: app screen · genre: editorial · theme: custom (Hue: sage-design, "Letter from home") · redesign: full
+ * paper: oklch(96% 0.012 85) · accent: oklch(45% 0.13 265) · display: Newsreader · body: Hanken Grotesk
+ * nav: kept (icon rail, expands on hover) · signature: the "Right now" note about Kamala that leads Overview · states: loading, empty, offline, urgent
+ * axes: warm-paper/text-serif/ink-blue · posture: calm surface, urgent payload · contrast: pass · v2.0.0 */
+/* Hallmark · dropped #tailwind-config (inline Tailwind config moved to js/tw-config.js, shared by all pages) */
+/* Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V4 · weakest: P, a dashboard argues little; made the screen lead with the person's state in a sentence instead of four stat cards */
+
+/* ============ Tokens (single source: .claude/skills/sage-design/design-model.yaml) ============
+   Colours are RGB triplets so Tailwind can add alpha: rgb(var(--accent) / .2) */
+:root, :root[data-theme="light"] {
+  color-scheme: light;
+  --canvas: 246 242 234; --surface: 255 253 248; --inset: 251 248 242; --raise: 239 233 222;
+  --line: 227 220 207; --line-strong: 207 198 182;
+  --ink: 35 32 27; --ink-2: 87 81 74; --ink-3: 107 100 90; --ink-4: 207 198 182;
+  --accent: 45 79 158; --accent-hover: 36 66 134; --on-accent: 255 251 245; --on-solid: 255 251 245; --on-status: 255 251 245;
+  --ok: 59 117 73; --warn: 143 87 11; --danger: 179 38 30; --info: 45 79 158; --danger-solid: 179 38 30; --danger-solid-hover: 150 30 24;
+  --ok-soft: rgb(227 238 226); --warn-soft: rgb(246 233 210); --danger-soft: rgb(247 224 219); --info-soft: rgb(228 234 247); --accent-soft: rgb(228 234 247);
+  --scrim: 23 21 19;
+  --shadow-card: 0 1px 2px rgb(60 44 20 / .05), 0 4px 16px -8px rgb(60 44 20 / .10);
+  --shadow-overlay: 0 24px 48px -16px rgb(60 44 20 / .25);
+
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-element: 4px; --radius-control: 8px; --radius-component: 14px; --radius-container: 20px; --radius-pill: 999px;
+  --ease: cubic-bezier(0.2, 0, 0, 1); --dur-micro: 160ms; --dur-short: 240ms;
+  --space-2xs: 2px; --space-xs: 4px; --space-sm: 8px; --space-md: 16px; --space-lg: 24px; --space-xl: 32px; --space-2xl: 48px; --space-3xl: 64px; --space-4xl: 96px;
+
+  /* Hallmark names, mapped onto the SAGE tokens */
+  --color-paper: rgb(var(--canvas)); --color-paper-2: rgb(var(--surface)); --color-paper-3: rgb(var(--raise));
+  --color-ink: rgb(var(--ink)); --color-ink-2: rgb(var(--ink-2)); --color-muted: rgb(var(--ink-3));
+  --color-rule: rgb(var(--line)); --color-accent: rgb(var(--accent)); --color-accent-ink: rgb(var(--on-accent)); --color-focus: rgb(var(--accent));
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: 23 21 19; --surface: 32 29 26; --inset: 27 25 22; --raise: 42 38 34;
+  --line: 54 49 44; --line-strong: 74 68 61;
+  --ink: 239 234 225; --ink-2: 185 177 166; --ink-3: 150 141 129; --ink-4: 107 100 90;
+  --accent: 157 182 242; --accent-hover: 204 216 241; --on-accent: 20 33 63; --on-status: 23 21 19;
+  --ok: 134 199 154; --warn: 227 174 91; --danger: 240 144 127; --info: 157 182 242; --danger-solid: 192 53 42; --danger-solid-hover: 168 44 34;
+  --ok-soft: rgb(134 199 154 / .12); --warn-soft: rgb(227 174 91 / .13); --danger-soft: rgb(240 144 127 / .14);
+  --info-soft: rgb(157 182 242 / .13); --accent-soft: rgb(157 182 242 / .13);
+  --scrim: 0 0 0;
+  --shadow-card: none; --shadow-overlay: 0 24px 48px -16px rgb(0 0 0 / .6);
+}
+
+/* ============ Base (the Hallmark Floor) ============ */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scrollbar-color: var(--color-muted) var(--color-paper); }
+body {
+  margin: 0; background: var(--color-paper); color: var(--color-ink);
+  font-family: var(--font-body); font-size: 1rem; line-height: 1.55;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased; caret-color: var(--color-accent);
+}
+::selection { background: rgb(var(--accent) / .22); color: var(--color-ink); }
+:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
+h1, h2, h3, h4 {
+  margin: 0; font-family: var(--font-display); font-weight: 500; font-optical-sizing: auto;
+  font-synthesis: none; overflow-wrap: break-word; min-width: 0; text-wrap: balance; letter-spacing: -0.005em;
+}
+p { text-wrap: pretty; }
+button, input, select, textarea { font: inherit; }
+[hidden] { display: none !important; }
+.num { font-variant-numeric: tabular-nums; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* Icons: Material Symbols at a lighter weight, closer to the serif's hairlines */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+  display: inline-block; vertical-align: middle; line-height: 1; user-select: none;
+}
+.filled { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+/* ============ Components ============ */
+.card {
+  background: rgb(var(--surface)); color: rgb(var(--ink)); border: 1px solid rgb(var(--line));
+  border-radius: var(--radius-component); box-shadow: var(--shadow-card);
+}
+.well { background: rgb(var(--inset)); border: 1px solid rgb(var(--line)); border-radius: var(--radius-control); }
+.card-head {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-md);
+  padding-bottom: 12px; border-bottom: 1px solid rgb(var(--line));
+}
+.card-title { font-family: var(--font-display); font-size: 1.25rem; line-height: 1.25; font-weight: 500; color: rgb(var(--ink)); }
+.metric { font-family: var(--font-body); font-size: 2.125rem; line-height: 1.05; font-weight: 500; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; color: rgb(var(--ink)); }
+
+/* Buttons: one primary style. Eight states: default, hover, active, focus-visible, disabled, loading (aria-busy), selected (aria-pressed), urgent. */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-sm);
+  min-height: 44px; padding: 0 var(--space-md); border-radius: var(--radius-control);
+  font-size: 0.875rem; font-weight: 600; line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled, .btn[aria-disabled="true"] {
+  background: rgb(var(--raise)); color: rgb(var(--ink-3)); border-color: rgb(var(--line)); cursor: not-allowed; transform: none;
+}
+.btn[aria-busy="true"] { cursor: progress; }
+.btn-primary { background: rgb(var(--accent)); color: rgb(var(--on-accent)); }
+.btn-primary:hover { background: rgb(var(--accent-hover)); }
+.btn-secondary { background: rgb(var(--surface)); color: rgb(var(--ink)); border-color: rgb(var(--line-strong)); }
+.btn-secondary:hover { background: rgb(var(--raise)); }
+.btn-ghost { background: transparent; color: rgb(var(--ink-2)); }
+.btn-ghost:hover { background: rgb(var(--raise)); color: rgb(var(--ink)); }
+.btn-urgent { background: rgb(var(--danger-solid)); color: rgb(var(--on-solid)); }
+.btn-urgent:hover { background: rgb(var(--danger-solid-hover)); }
+
+/* Square icon button, 44px target */
+.icon-btn {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-control);
+  color: rgb(var(--ink-2)); background: transparent; border: 0; cursor: pointer; position: relative;
+  transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+}
+.icon-btn:hover { background: rgb(var(--raise)); color: rgb(var(--ink)); }
+.icon-btn:active { transform: translateY(1px); }
+
+/* Inputs */
+.field-label { display: block; font-size: 0.8125rem; font-weight: 600; color: rgb(var(--ink)); margin-bottom: var(--space-xs); }
+.input {
+  width: 100%; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control);
+  background: rgb(var(--inset)); color: rgb(var(--ink)); border: 1px solid rgb(var(--line-strong)); font-size: 1rem;
+  transition: border-color var(--dur-micro) var(--ease), box-shadow var(--dur-micro) var(--ease);
+}
+textarea.input { padding: var(--space-sm) 12px; min-height: 72px; }
+.input::placeholder { color: rgb(var(--ink-3)); }
+.input:hover { border-color: rgb(var(--ink-3)); }
+.input:focus { outline: none; border-color: rgb(var(--accent)); box-shadow: 0 0 0 3px rgb(var(--accent) / .2); }
+.input:disabled { background: rgb(var(--raise)); color: rgb(var(--ink-3)); cursor: not-allowed; }
+.input[aria-invalid="true"] { border-color: rgb(var(--danger)); }
+
+/* Sidebar navigation */
+.nav-item {
+  position: relative; display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 0 12px;
+  border-radius: var(--radius-control); color: rgb(var(--ink-2)); text-decoration: none; font-size: 0.875rem;
+  transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+}
+.nav-item:hover { background: rgb(var(--raise)); color: rgb(var(--ink)); }
+.nav-item:active { transform: translateY(1px); }
+.nav-item[aria-current="page"] { background: var(--accent-soft); color: rgb(var(--accent)); font-weight: 600; }
+.nav-item[aria-current="page"]::before {
+  content: ""; position: absolute; left: -12px; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: rgb(var(--accent));
+}
+.nav-label { white-space: nowrap; transition: opacity var(--dur-micro) var(--ease); }
+@media (min-width: 768px) {
+  #sidebar:not(:hover):not(:focus-within) .nav-label { opacity: 0; }
+}
+
+/* Segmented control (metric switcher) */
+.segmented { display: inline-flex; padding: var(--space-xs); gap: var(--space-xs); border-radius: var(--radius-control); background: rgb(var(--raise)); }
+.segmented .metric-btn {
+  min-height: 36px; padding: 0 12px; border-radius: 6px; border: 0; background: transparent; cursor: pointer;
+  font-size: 0.875rem; font-weight: 500; transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease);
+}
+.segmented .metric-btn:hover { color: rgb(var(--ink)); }
+.segmented .metric-btn.bg-raise { background: rgb(var(--surface)); color: rgb(var(--ink)); box-shadow: 0 1px 2px rgb(var(--scrim) / .12); }
+
+/* Tables */
+.table th { font-size: 0.8125rem; font-weight: 600; color: rgb(var(--ink-3)); text-align: left; padding: var(--space-sm) 12px var(--space-sm) 0; }
+.table td { padding: 12px 12px 12px 0; vertical-align: top; }
+.table tbody tr { transition: background-color var(--dur-micro) var(--ease); }
+
+/* Roadmap (hardware the prototype does not have) */
+.roadmap { position: relative; }
+.roadmap .content { opacity: 0.35; pointer-events: none; }
+.roadmap .veil { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: var(--space-lg); text-align: center; }
+
+/* Slide-over panel */
+#panel { box-shadow: var(--shadow-overlay); transition: transform var(--dur-short) var(--ease); }
+
+/* Urgent icon: the only animation on the dashboard, a slow blink while someone needs help */
+@keyframes urgent-blink { 50% { opacity: 0.45; } }
+@media (prefers-reduced-motion: no-preference) { .urgent-dot { animation: urgent-blink 1.4s ease-in-out infinite; } }
+
+#sidebar, header, footer, .card { transition: background-color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease); }
+/* The rail's width snaps (never animated); only the phone slide-in moves, by transform. */
+#sidebar { transition: transform var(--dur-short) var(--ease), background-color var(--dur-micro) var(--ease); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
