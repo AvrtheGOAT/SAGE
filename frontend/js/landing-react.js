@@ -45,14 +45,29 @@
     const [scene, setScene] = useState("calm");
     const tabRefs = useRef([]);
     const rowsRef = useRef(null);
+    const prevIdx = useRef(0);
     const mounted = useRef(false);
+    const [pill, setPill] = useState(null); // { x, w } of the selected tab, for the sliding indicator
     const s = SCENES[scene];
+    const idx = ORDER.indexOf(scene);
 
     useEffect(() => { host.dataset.scene = scene; }, [scene]);
-    // Fade the new rows in: apply the hidden start state, force a reflow, then let them transition.
+    // Direction-aware tabs (after Cult UI): the pill follows the selected tab, re-measured on resize.
+    useLayoutEffect(() => {
+      const measure = () => {
+        const t = tabRefs.current[ORDER.indexOf(scene)];
+        if (t) setPill({ x: t.offsetLeft, w: t.offsetWidth, total: t.parentElement.scrollWidth });
+      };
+      measure();
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }, [scene]);
+    // The new rows come in from the side you moved toward: hidden start state, reflow, then transition.
     useLayoutEffect(() => {
       if (!mounted.current) { mounted.current = true; return; }
       const el = rowsRef.current;
+      el.dataset.dir = idx >= prevIdx.current ? "next" : "prev";
+      prevIdx.current = idx;
       el.classList.add("is-entering");
       void el.offsetWidth;
       el.classList.remove("is-entering");
@@ -75,7 +90,9 @@
         <span className="note-title">What Rohan sees</span>
         <span id="demo-badge" className=${"badge " + s.badge[0]}>${s.badge[1]}</span>
       </div>
-      <div className="note-tabs" role="tablist" aria-label="Choose an example day">
+      <div className=${"note-tabs" + (pill ? " has-indicator" : "")} role="tablist" aria-label="Choose an example day">
+        ${pill && html`<span className="note-tab-indicator" aria-hidden="true"
+          style=${{ width: pill.total + "px", clipPath: `inset(0 ${pill.total - pill.x - pill.w}px 0 ${pill.x}px round 999px)` }}></span>`}
         ${ORDER.map((k, i) => html`
           <button key=${k} type="button" role="tab" id=${"demo-tab-" + k} className="note-tab"
             aria-selected=${k === scene} aria-controls="demo-rows" tabIndex=${k === scene ? 0 : -1}
@@ -110,6 +127,16 @@
     "Nobody responded yet, so the backup contact is alerted.",
     "Still no response, so SAGE calls emergency services.",
   ];
+  // Cancel-window ring (after Magic UI's Animated Circular Progress Bar): empties one fifth per second.
+  const RING_R = 20, RING_C = 2 * Math.PI * RING_R;
+  function Ring({ left }) {
+    return html`<svg className="sos-ring" viewBox="0 0 44 44" aria-hidden="true">
+      <circle className="track" cx="22" cy="22" r=${RING_R} />
+      <circle className="bar" cx="22" cy="22" r=${RING_R}
+        style=${{ strokeDasharray: RING_C, strokeDashoffset: RING_C * (1 - left / 5) }} />
+    </svg>`;
+  }
+
   // phase: idle | counting | escalating | cancelled | handled; at = index of the step reached
   const IDLE = { phase: "idle", left: 5, at: -1 };
 
@@ -179,7 +206,10 @@
       <ol className="sos-steps" id="sos-steps">
         ${STEPS.map(([key, icon, title, note], i) => html`
           <li key=${key} data-step=${key} className=${stepClass(i)} aria-current=${i === at && !settled && phase !== "idle" ? "step" : undefined}>
-            <span className="sos-dot">${icon ? html`<${Icon} name=${icon} />` : html`<span className="sos-count" id="sos-count">${count}</span>`}</span>
+            <span className="sos-dot">${icon ? html`<${Icon} name=${icon} />` : html`<${Fragment}>
+              ${phase === "counting" && html`<${Ring} left=${left} />`}
+              <span className="sos-count" id="sos-count" key=${count}>${count}</span>
+            <//>`}</span>
             <div><strong>${title}</strong><span>${note}</span></div>
           </li>`)}
       </ol>

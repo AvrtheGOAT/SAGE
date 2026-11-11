@@ -199,8 +199,10 @@ async function ack(id, outcome) {
 function renderVitals() {
   const live = wearableLive();
   const hr = live ? num(S.latest?.heart_rate) : null, o2 = live ? num(S.latest?.spo2) : null;
-  $("hr-value").textContent = hr ?? "–";
-  $("spo2-value").textContent = o2 ?? "–";
+  // Number ticker (js/motion-kit.js): readings count to their new value instead of jumping.
+  const show = (id, v) => (window.SageMotion ? SageMotion.tick($(id), v) : ($(id).textContent = v ?? "–"));
+  show("hr-value", hr);
+  show("spo2-value", o2);
   const [ht, hl] = live ? hrTone(hr) : ["muted", "Offline"];
   const [ot, ol] = live ? spo2Tone(o2) : ["muted", "Offline"];
   $("hr-badge").innerHTML = pill(ht, hl);

@@ -24,10 +24,11 @@
 <div id="backdrop" class="fixed inset-0 bg-scrim/50 z-40 hidden md:hidden"></div>
 
 <!-- ==================== SIDEBAR ====================
-     Desktop: a slim icon rail that widens over the page while the mouse (or keyboard focus) is on it.
+     Desktop: a slim icon rail that widens over the page while the mouse is on it, or while keyboard
+     focus is in it. A mouse click leaves it collapsed (see #sidebar in sage.css).
      Phone:   hidden; the menu button slides it in. -->
 <div class="hidden md:block w-[76px] shrink-0" aria-hidden="true"></div>
-<aside id="sidebar" class="bg-surface border-line fixed inset-y-0 left-0 z-50 h-screen w-64 md:w-[76px] md:hover:w-64 md:focus-within:w-64 flex flex-col justify-between overflow-hidden border-r px-3 py-5 -translate-x-full md:translate-x-0" aria-label="Sidebar">
+<aside id="sidebar" class="bg-surface border-line fixed inset-y-0 left-0 z-50 h-screen w-64 flex flex-col justify-between overflow-hidden border-r px-3 py-5 -translate-x-full md:translate-x-0" aria-label="Sidebar">
   <div class="flex flex-col gap-6 min-h-0">
     <div class="flex items-center justify-between pl-1">
       <div class="flex items-center gap-3">
@@ -418,5 +419,6 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/motion-kit.js') }}"></script>
 <script src="{{ url_for('static', filename='js/sage_live.js') }}"></script>
 </body></html>
