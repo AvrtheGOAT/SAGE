@@ -207,9 +207,15 @@ textarea.input { padding: var(--space-sm) 12px; min-height: 72px; }
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
 
 /* Blur fade (js/motion-kit.js): only ever added by script, to sections still below the fold. */
-.blur-fade { transition: opacity calc(var(--dur-short) * 2) var(--ease), transform calc(var(--dur-short) * 2) var(--ease), filter calc(var(--dur-short) * 2) var(--ease); }
-.blur-fade.is-pending { opacity: 0; transform: translateY(12px); filter: blur(6px); }
+.blur-fade { transition: opacity calc(var(--dur-short) * 3) var(--ease), transform calc(var(--dur-short) * 3) var(--ease), filter calc(var(--dur-short) * 3) var(--ease); }
+.blur-fade.is-pending { opacity: 0; transform: translateY(var(--space-xl)); filter: blur(8px); }
+.blur-fade--calm.is-pending { transform: none; filter: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* Reduced motion keeps one gentle opacity fade on scroll (no movement), after the reset above. */
+@media (prefers-reduced-motion: reduce) {
+  .blur-fade--calm { transition-property: opacity !important; transition-duration: calc(var(--dur-short) * 2) !important; }
 }

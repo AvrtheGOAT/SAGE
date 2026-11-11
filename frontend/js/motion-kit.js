@@ -52,16 +52,26 @@
   // Elements already on screen are left alone, so nothing visible ever blinks.
   // A plain scroll check rather than an IntersectionObserver: a jump (End key, a #link) that skips
   // past an element still reveals it, because anything above the fold line counts as seen.
+  // Items that arrive together (a row of steps, ledger rows) come in one after another.
+  // With reduced motion it is a plain, gentle opacity fade: no movement, no blur.
   function blurFade(selector) {
-    if (reduced()) return;
     let pending = [...document.querySelectorAll(selector)].filter((el) => el.getBoundingClientRect().top > innerHeight);
     if (!pending.length) return;
-    pending.forEach((el) => el.classList.add("blur-fade", "is-pending"));
+    const calm = reduced();
+    // hidden state first, with no transition, so nothing animates out on load; then switch the transition on
+    pending.forEach((el) => { el.style.transition = "none"; el.classList.add("blur-fade", "is-pending", ...(calm ? ["blur-fade--calm"] : [])); });
+    void document.body.offsetHeight;
+    pending.forEach((el) => { el.style.transition = ""; });
     const check = () => {
-      const line = innerHeight * 0.9;
+      const line = innerHeight * 0.88;
+      const order = new Map(); // stagger within each group (siblings), not across the whole page
       pending = pending.filter((el) => {
         if (el.getBoundingClientRect().top >= line) return true;
+        const n = order.get(el.parentElement) || 0;
+        order.set(el.parentElement, n + 1);
+        el.style.transitionDelay = calm ? "" : `${Math.min(n, 5) * 90}ms`;
         el.classList.remove("is-pending");
+        el.addEventListener("transitionend", () => { el.style.transitionDelay = ""; }, { once: true });
         return false;
       });
       if (!pending.length) { removeEventListener("scroll", check); removeEventListener("resize", check); }
