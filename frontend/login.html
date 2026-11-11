@@ -144,6 +144,8 @@
 
   <footer class="wrap footer"><span class="wordmark">SAGE</span><span>Thoughtful support for the people who matter most.</span><span>Health trends and alerts are not a diagnosis.</span></footer>
 
+  <script src="{{ url_for('static', filename='js/motion-kit.js') }}"></script>
+  <script>SageMotion.blurFade(".story > *, #features h2, #features .section-lead, .ledger-row, .sos, #how-it-works h2, #how-it-works .section-lead, .step, .privacy > div, .privacy-points li");</script>
   <!-- React islands for the two demos (no build step). If these fail to load, the static markup stays. -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>

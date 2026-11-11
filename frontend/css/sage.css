@@ -144,8 +144,12 @@ textarea.input { padding: var(--space-sm) 12px; min-height: 72px; }
   content: ""; position: absolute; left: -12px; top: 10px; bottom: 10px; width: 3px; border-radius: 0 3px 3px 0; background: rgb(var(--accent));
 }
 .nav-label { white-space: nowrap; transition: opacity var(--dur-micro) var(--ease); }
+/* Desktop rail: 76px, widening over the page on hover or keyboard focus only. Plain :focus-within
+   would keep it open after a mouse click on a link (the link keeps focus) and cover the header. */
 @media (min-width: 768px) {
-  #sidebar:not(:hover):not(:focus-within) .nav-label { opacity: 0; }
+  #sidebar { width: 76px; }
+  #sidebar:hover, #sidebar:has(:focus-visible) { width: 16rem; }
+  #sidebar:not(:hover):not(:has(:focus-visible)) .nav-label { opacity: 0; }
 }
 
 /* Segmented control (metric switcher) */
@@ -177,6 +181,13 @@ textarea.input { padding: var(--space-sm) 12px; min-height: 72px; }
 #sidebar, header, footer, .card { transition: background-color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease); }
 /* The rail's width snaps (never animated); only the phone slide-in moves, by transform. */
 #sidebar { transition: transform var(--dur-short) var(--ease), background-color var(--dur-micro) var(--ease); }
+
+/* Theme reveal (js/motion-kit.js): the new theme is uncovered by a circle, not cross-faded. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* Blur fade (js/motion-kit.js): only ever added by script, to sections still below the fold. */
+.blur-fade { transition: opacity calc(var(--dur-short) * 2) var(--ease), transform calc(var(--dur-short) * 2) var(--ease), filter calc(var(--dur-short) * 2) var(--ease); }
+.blur-fade.is-pending { opacity: 0; transform: translateY(12px); filter: blur(6px); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }

@@ -90,6 +90,7 @@
   </form>
 </div>
 
+<script src="{{ url_for('static', filename='js/motion-kit.js') }}"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));

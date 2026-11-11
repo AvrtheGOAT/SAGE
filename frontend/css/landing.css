@@ -65,6 +65,19 @@
 .note-tab:active { transform: translateY(1px); }
 .note-tab[aria-selected="true"] { background: rgb(var(--ink)); border-color: rgb(var(--ink)); color: rgb(var(--canvas)); }
 
+/* Direction-aware tabs (after Cult UI): with JS, one ink pill slides to the chosen tab, and the new
+   rows come in from the side you moved toward. Without JS the selected tab paints itself (above). */
+.note-tabs { position: relative; }
+.note-tab { position: relative; z-index: 1; }
+.note-tabs.has-indicator .note-tab[aria-selected="true"] { background: transparent; border-color: transparent; }
+.note-tab-indicator {
+  position: absolute; top: var(--space-sm); left: 0; height: 36px; border-radius: var(--radius-pill);
+  background: rgb(var(--ink)); pointer-events: none;
+  transition: clip-path var(--dur-short) var(--ease);
+}
+.note-rows.is-entering[data-dir="next"] .note-row { transform: translateX(16px); }
+.note-rows.is-entering[data-dir="prev"] .note-row { transform: translateX(-16px); }
+
 /* Try the SOS safety net */
 .sos {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: var(--space-2xl); align-items: start;
@@ -97,6 +110,16 @@
   transition: background-color var(--dur-short) var(--ease), color var(--dur-short) var(--ease), border-color var(--dur-short) var(--ease), transform var(--dur-short) var(--ease);
 }
 .sos-count { font-weight: 600; font-variant-numeric: tabular-nums; }
+/* Cancel-window ring (after Magic UI's Animated Circular Progress Bar) and a rolling digit (after Cult
+   UI's Rolling Number): the ring empties second by second while the number rolls down. */
+.sos-ring { position: absolute; inset: -2px; width: 44px; height: 44px; transform: rotate(-90deg); pointer-events: none; }
+.sos-ring circle { fill: none; stroke-width: 3; }
+.sos-ring .track { stroke: rgb(var(--on-solid) / .3); }
+.sos-ring .bar { stroke: rgb(var(--on-solid)); stroke-linecap: round; transition: stroke-dashoffset 1000ms linear; }
+@media (prefers-reduced-motion: no-preference) {
+  .sos-steps li.is-active .sos-count { animation: sos-roll var(--dur-short) var(--ease); }
+}
+@keyframes sos-roll { from { opacity: 0; transform: translateY(-8px); } }
 .sos[data-state]:not([data-state="idle"]) .sos-steps li:not(.is-active):not(.is-done) { opacity: 0.45; }
 .sos-steps li.is-active .sos-dot { background: rgb(var(--danger-solid)); border-color: rgb(var(--danger-solid)); color: rgb(var(--on-solid)); transform: scale(1.08); }
 .sos-steps li.is-done .sos-dot { background: var(--danger-soft); border-color: rgb(var(--danger) / .5); color: rgb(var(--danger)); }
