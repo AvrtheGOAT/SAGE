@@ -56,8 +56,7 @@ const TONES = {
 };
 const DOTS = { ok: "bg-ok", warn: "bg-warn", danger: "bg-danger", info: "bg-info", muted: "bg-ink-3" };
 function pill(tone, text, pulse = false) {
-  return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border whitespace-nowrap ${TONES[tone]}">
-    <span class="w-1.5 h-1.5 rounded-full ${DOTS[tone]} ${pulse ? "animate-pulse" : ""}"></span>${esc(text)}</span>`;
+  return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border whitespace-nowrap ${TONES[tone]}">${esc(text)}</span>`;
 }
 
 // Vitals rules (simple thresholds for alerts, not medical advice)
@@ -79,8 +78,8 @@ function themeChart() {
 }
 function makeChart() {
   if (typeof Chart === "undefined") return;
-  Chart.defaults.font.family = "Inter, system-ui, sans-serif";
-  Chart.defaults.font.size = 12;
+  Chart.defaults.font.family = getComputedStyle(document.documentElement).getPropertyValue("--font-body").trim() || "system-ui, sans-serif";
+  Chart.defaults.font.size = 13;
   chart = new Chart($("vitals-chart"), {
     type: "line",
     data: { labels: [], datasets: [{ data: [], fill: true, tension: 0.35, borderWidth: 2.5, pointRadius: [], pointBackgroundColor: [], pointBorderWidth: 2 }] },
@@ -130,7 +129,7 @@ function renderHeader() {
   $("status-badge").outerHTML = `<span id="status-badge">${pill(tone, text, tone === "danger" || tone === "warn")}</span>`;
 
   $("presence-dot").className = `absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-surface ${wearableLive() ? "bg-ok" : "bg-ink-3"}`;
-  $("last-synced").textContent = S.latest ? `· last reading ${ago(S.latest.timestamp)}` : "· waiting for the wearable";
+  $("last-synced").textContent = S.latest ? `Last reading ${ago(S.latest.timestamp)}` : "Waiting for the wearable";
   $("wearable-pill").innerHTML = wearableLive()
     ? `<span class="material-symbols-outlined text-[15px]">wifi</span>Wearable online`
     : `<span class="material-symbols-outlined text-[15px]">wifi_off</span>${S.latest ? "Wearable offline" : "Wearable not seen yet"}`;
@@ -141,7 +140,7 @@ function renderHeader() {
 
   const ok = S.up !== false;
   $("footer-dot").className = `w-2 h-2 rounded-full ${ok && wearableLive() ? "bg-ok" : ok ? "bg-warn" : "bg-danger"}`;
-  $("footer-text").textContent = !ok ? "Backend offline" : wearableLive() ? "All connected" : "Backend online · wearable offline";
+  $("footer-text").textContent = !ok ? "Backend offline" : wearableLive() ? "All connected" : "Backend online, wearable offline";
 }
 
 let bannerAlertId = null, bannerAlert = null;
@@ -288,8 +287,8 @@ function careSummaryHtml(m) {
   if (!m || !m.level || !cs || !cs.configured) return "";
   if (cs.text) {
     return `<div class="mt-3 p-3 rounded-lg bg-surface border border-line text-ink text-sm leading-relaxed">${esc(cs.text)}
-      <span class="flex flex-wrap items-center gap-x-2 mt-2 text-xs text-ink-3">Care agent summary · Agent37 · ${esc(ago(cs.created_at))}
-      ${cs.busy ? "· writing a new one…" : `<button type="button" data-refresh-summary class="text-accent font-medium hover:underline">Write a fresh one</button>`}</span></div>`;
+      <span class="flex flex-wrap items-center gap-x-2 mt-2 text-xs text-ink-3">Care agent summary by Agent37, ${esc(ago(cs.created_at))}.
+      ${cs.busy ? "Writing a new one…" : `<button type="button" data-refresh-summary class="text-accent font-medium hover:underline">Write a fresh one</button>`}</span></div>`;
   }
   const msg = cs.busy ? "The care agent is writing a summary for the family…"
     : cs.error ? `The care agent couldn't write a summary: ${cs.error}` : "Waiting for the care agent…";
@@ -319,7 +318,7 @@ function renderCognitive() {
     title = m.title || ({ normal: "Routine looks steady", watch: "Worth keeping an eye on", concern: "A change worth mentioning to her doctor" }[m.level]);
     text = m.summary || m.detail || "";
     reasons = m.reasons || [];
-    footnote = `SAGE memory model · compared with her own first month · risk ${Math.round((m.risk ?? 0) * 100)}% this week`;
+    footnote = `SAGE memory model, compared with her own first month. Risk this week: ${Math.round((m.risk ?? 0) * 100)}%.`;
   } else if (m && m.learning) {             // model running, but not enough history yet
     title = "Building her baseline";
     text = m.message;
@@ -349,7 +348,7 @@ function renderCognitive() {
   $("ov-mem").textContent = tone === "muted" ? "Building baseline" : title;
   $("cog-flag-text").className = `text-sm mt-0.5 ${txt[1]}`;
   $("cog-flag-text").innerHTML = esc(text)
-    + (reasons.length ? `<ul class="mt-2 flex flex-col gap-0.5">${reasons.map((r) => `<li>· ${esc(r.replace("->", "→"))}</li>`).join("")}</ul>` : "")
+    + (reasons.length ? `<ul class="mt-2 list-disc pl-5 flex flex-col gap-0.5">${reasons.map((r) => `<li>${esc(r.replace("->", "→"))}</li>`).join("")}</ul>` : "")
     + (footnote ? `<span class="block mt-2 text-xs text-ink-3">${esc(footnote)}</span>` : "")
     + careSummaryHtml(m);
 }
@@ -361,8 +360,8 @@ function renderHistory() {
     const [tone, sev] = isUrgent(a) ? ["danger", "High"] : a.kind.endsWith("missed") ? ["warn", "Medium"] : ["info", "Info"];
     return `<tr class="hover:bg-raise">
       <td class="py-3 ${a.acknowledged ? "text-ink" : "font-semibold text-ink"}">${esc(when(a.created_at))}</td>
-      <td class="py-3"><div class="font-semibold ${isUrgent(a) ? "text-danger" : "text-ink"}">${esc(ALERT_NAMES[a.kind] || a.kind)}</div><div class="text-ink-2">${esc(a.message)}</div>${(a.escalation || []).map((s) => `<div class="text-xs text-ink-3 mt-0.5">${clock(s.at)} · ${esc(s.detail)}</div>`).join("")}</td>
-      <td class="py-3"><span class="px-2 py-0.5 rounded border font-semibold text-xs ${TONES[tone]}">${sev}</span></td>
+      <td class="py-3"><div class="font-semibold ${isUrgent(a) ? "text-danger" : "text-ink"}">${esc(ALERT_NAMES[a.kind] || a.kind)}</div><div class="text-ink-2">${esc(a.message)}</div>${(a.escalation || []).map((s) => `<div class="text-xs text-ink-3 mt-0.5">${clock(s.at)}: ${esc(s.detail)}</div>`).join("")}</td>
+      <td class="py-3"><span class="px-2.5 py-0.5 rounded-full border font-semibold text-xs ${TONES[tone]}">${sev}</span></td>
       <td class="py-3 ${a.acknowledged ? "text-ink-2" : "text-danger font-semibold"}">${a.acknowledged ? esc(OUTCOMES[a.outcome] || "Handled by family") : "Waiting for family"}</td>
       <td class="py-3 text-right">${a.acknowledged ? "" : `<button data-ack="${esc(a.id)}" class="text-accent font-semibold hover:underline">Mark handled</button>`}</td></tr>`;
   }).join("") : `<tr><td colspan="5" class="py-4 text-ink-2">No alerts yet.</td></tr>`;
@@ -443,7 +442,7 @@ const parseKey = (k) => { const [y, m, d] = k.split("-").map(Number); return new
 function statTile(label, value, sub = "", tone = "") {
   const c = { ok: "text-ok", warn: "text-warn", danger: "text-danger" }[tone] || "text-ink";
   return `<div class="rounded-lg bg-inset border border-line p-3"><div class="text-sm text-ink-2">${esc(label)}</div>
-    <div class="font-display text-h3 font-semibold mt-1 ${c}">${esc(value)}</div>${sub ? `<div class="text-xs text-ink-3 mt-0.5">${esc(sub)}</div>` : ""}</div>`;
+    <div class="text-h2 font-semibold mt-1 ${c}">${esc(value)}</div>${sub ? `<div class="text-xs text-ink-3 mt-0.5">${esc(sub)}</div>` : ""}</div>`;
 }
 
 // ---- Weekly analytics (Mon–Sun week of the selected date) ----
@@ -557,9 +556,9 @@ async function renderDay(map = remindersByDay()) {
   for (const r of rs) {
     const m = replyMins(r);
     const detail = r.status === "missed" ? "No reply after reminders and retries. Family was notified."
-      : `Replied at ${clock(r.responded_at)} by ${r.source === "button" ? "button" : "voice"} · ${m === 0 ? "right away" : `${fmtMins(m)} after it was due`}`;
+      : `Replied at ${clock(r.responded_at)} by ${r.source === "button" ? "button" : "voice"}, ${m === 0 ? "right away" : `${fmtMins(m)} after it was due`}`;
     items.push({ t: r.scheduled_at, icon: r.type === "checkin" ? "wb_sunny" : "medication", tone: STATUS_TONE[r.status] || "muted",
-      title: `${r.text || r.type} · due ${clock(r.scheduled_at)}`, detail, tag: STATUS_LABEL[r.status] || r.status });
+      title: `${r.text || r.type}, due ${clock(r.scheduled_at)}`, detail, tag: STATUS_LABEL[r.status] || r.status });
   }
   for (const a of day.alerts) {
     items.push({ t: a.created_at, icon: isUrgent(a) ? "emergency" : "notifications", tone: isUrgent(a) ? "danger" : "warn",
@@ -579,20 +578,20 @@ async function renderDay(map = remindersByDay()) {
         <div class="min-w-0"><div class="text-xs text-ink-3">${clock(i.t)}</div>
           <div class="text-base font-medium text-ink flex items-center gap-2"><span class="material-symbols-outlined text-lg text-ink-3">${i.icon}</span>${esc(i.title)}</div>
           <div class="text-sm text-ink-2 mt-0.5">${esc(i.detail)}</div></div>
-        <span class="shrink-0 px-2 py-0.5 rounded border text-xs font-semibold ${TONES[i.tone]}">${esc(i.tag)}</span>
+        <span class="shrink-0 px-2.5 py-0.5 rounded-full border text-xs font-semibold ${TONES[i.tone]}">${esc(i.tag)}</span>
       </div></li>`).join("")
     : `<li class="text-sm text-ink-2 -ml-6">Nothing recorded on this day.</li>`;
 
   const v = day.vitals;
   $("dd-vitals").innerHTML = v && v.count ? [
     `<div class="rounded-lg bg-inset border border-line p-4"><div class="text-sm text-ink-2">Heart rate</div>
-      <div class="font-display text-h2 font-semibold text-ink mt-1">${v.hr_avg ?? "–"} <span class="text-sm font-normal text-ink-2">bpm average</span></div>
-      <div class="text-sm text-ink-2 mt-1">Lowest ${v.hr_min ?? "–"} · Highest ${v.hr_max ?? "–"}</div></div>`,
+      <div class="text-h2 font-semibold text-ink mt-1">${v.hr_avg ?? "–"} <span class="text-sm font-normal text-ink-2">bpm average</span></div>
+      <div class="text-sm text-ink-2 mt-1">Lowest ${v.hr_min ?? "–"}, highest ${v.hr_max ?? "–"}</div></div>`,
     `<div class="rounded-lg bg-inset border border-line p-4"><div class="text-sm text-ink-2">Blood oxygen</div>
-      <div class="font-display text-h2 font-semibold text-ink mt-1">${v.spo2_avg ?? "–"}<span class="text-sm font-normal text-ink-2">% average</span></div>
-      <div class="text-sm text-ink-2 mt-1">Lowest ${v.spo2_min ?? "–"}% · Highest ${v.spo2_max ?? "–"}%</div></div>`,
+      <div class="text-h2 font-semibold text-ink mt-1">${v.spo2_avg ?? "–"}<span class="text-sm font-normal text-ink-2">% average</span></div>
+      <div class="text-sm text-ink-2 mt-1">Lowest ${v.spo2_min ?? "–"}%, highest ${v.spo2_max ?? "–"}%</div></div>`,
     `<div class="rounded-lg bg-inset border border-line p-4 flex items-center justify-between"><div><div class="text-sm text-ink-2">Falls detected</div>
-      <div class="font-display text-h2 font-semibold mt-1 ${v.falls ? "text-danger" : "text-ok"}">${v.falls}</div></div>
+      <div class="text-h2 font-semibold mt-1 ${v.falls ? "text-danger" : "text-ok"}">${v.falls}</div></div>
       <div class="text-xs text-ink-3 text-right">${v.count.toLocaleString()} readings<br>from the wearable</div></div>`,
   ].join("") : `<div class="rounded-lg border border-dashed border-line p-5 text-center">
       <span class="material-symbols-outlined text-3xl text-ink-3">watch_off</span>
@@ -629,7 +628,7 @@ async function loadReports() {
         <span class="material-symbols-outlined text-xl ${r.content_type === "application/pdf" ? "text-danger" : "text-info"}">${r.content_type === "application/pdf" ? "picture_as_pdf" : "image"}</span>
         <div class="min-w-0">
           <div class="text-sm font-semibold text-ink truncate">${esc(r.title)}</div>
-          <div class="text-xs text-ink-3">${esc(KIND_LABEL[r.kind] || r.kind)} · ${fmtDate(r.report_date)} · ${fmtSize(r.size)}</div>
+          <div class="text-xs text-ink-3">${esc(KIND_LABEL[r.kind] || r.kind)}, ${fmtDate(r.report_date)}, ${fmtSize(r.size)}</div>
           ${r.notes ? `<div class="text-sm text-ink-2 mt-0.5">${esc(r.notes)}</div>` : ""}
         </div>
       </div>
@@ -800,12 +799,12 @@ function renderPanel() {
     if (kind === "patient") {
       const age = ageFrom(data.dob);
       const conds = (data.conditions || "").split(/[,\n]/).map((c) => c.trim()).filter(Boolean);
-      html += `<div class="flex items-center gap-4 mb-6"><span class="w-14 h-14 rounded-full border-2 border-accent bg-raise text-accent flex items-center justify-center font-semibold text-h4">${esc(initials(data.name))}</span>
-        <div><div class="text-base text-ink">${age != null ? `${age} years old` : "Age not added"}${data.blood_group ? ` · Blood group ${esc(data.blood_group)}` : ""}</div>
+      html += `<div class="flex items-center gap-4 mb-6"><span class="w-14 h-14 rounded-full bg-accent-soft text-accent flex items-center justify-center font-display text-h3">${esc(initials(data.name))}</span>
+        <div><div class="text-base text-ink">${age != null ? `${age} years old` : "Age not added"}${data.blood_group ? `, blood group ${esc(data.blood_group)}` : ""}</div>
         <div class="text-sm text-ink-2">${conds.length ? esc(conds[0]) + (conds.length > 1 ? ` and ${conds.length - 1} more` : "") : "No conditions added yet"}</div></div></div>`;
     }
     for (const [section, fields] of FIELDS[kind]) {
-      html += `<h3 class="font-display text-h4 font-semibold text-ink mt-2 mb-2">${section}</h3><dl class="divide-y divide-line border-y border-line mb-5">`;
+      html += `<h3 class="font-display text-h4 text-ink mt-2 mb-2">${section}</h3><dl class="divide-y divide-line border-y border-line mb-5">`;
       for (const [key, label] of fields) {
         if (key === "name") continue;
         const v = fieldValue(kind, key);
@@ -816,29 +815,29 @@ function renderPanel() {
     }
     if (kind === "guardian" && S.me) html += `<p class="text-sm text-ink-3">Signed in as ${esc(S.me.email)}</p>`;
     $("panel-body").innerHTML = html;
-    $("panel-foot").innerHTML = (kind === "guardian" ? `<button id="sign-out" type="button" class="mr-auto px-4 py-2 rounded-lg text-sm font-medium text-danger hover:bg-danger-soft">Sign out</button>` : "")
-      + `<button id="panel-edit" type="button" class="px-4 py-2 rounded-lg bg-accent text-on-accent text-sm font-medium hover:brightness-110">Edit profile</button>`;
+    $("panel-foot").innerHTML = (kind === "guardian" ? `<button id="sign-out" type="button" class="btn btn-ghost mr-auto !text-danger">Sign out</button>` : "")
+      + `<button id="panel-edit" type="button" class="btn btn-primary">Edit profile</button>`;
     $("panel-edit").onclick = () => { panelEditing = true; renderPanel(); };
     if ($("sign-out")) $("sign-out").onclick = async () => { await fetch("/api/auth/logout", { method: "POST" }).catch(() => {}); location.href = "/login"; };
     return;
   }
   let html = `<form id="profile-form" class="flex flex-col gap-5" novalidate>`;
   for (const [section, fields] of FIELDS[kind]) {
-    html += `<fieldset class="flex flex-col gap-3"><legend class="font-display text-h4 font-semibold text-ink mb-1">${section}</legend>`;
+    html += `<fieldset class="flex flex-col gap-3"><legend class="font-display text-h4 text-ink mb-1">${section}</legend>`;
     for (const [key, label, type, required, ph] of fields) {
-      const id = `pf-${key}`, v = esc(data[key] || ""), base = "rounded-lg bg-inset border border-line text-ink text-base px-3 py-2 focus:border-accent focus:ring-0 placeholder:text-ink-3";
+      const id = `pf-${key}`, v = esc(data[key] || ""), base = "input";
       let input;
       if (Array.isArray(type)) input = `<select id="${id}" name="${key}" class="${base}">${type.map((o) => `<option value="${o}" ${o === (data[key] || "") ? "selected" : ""}>${o || "Not set"}</option>`).join("")}</select>`;
       else if (type === "area") input = `<textarea id="${id}" name="${key}" rows="2" placeholder="${esc(ph || "")}" class="${base}">${v}</textarea>`;
       else input = `<input id="${id}" name="${key}" type="${type}" value="${v}" placeholder="${esc(ph || "")}" ${required ? "required" : ""} ${type === "date" ? `max="${dayKey(new Date())}"` : ""} class="${base}">`;
-      html += `<div class="flex flex-col gap-1.5"><label for="${id}" class="text-sm font-medium text-ink">${label}${required ? "" : ' <span class="font-normal text-ink-3">(optional)</span>'}</label>${input}</div>`;
+      html += `<div class="flex flex-col gap-1.5"><label for="${id}" class="field-label !mb-0">${label}${required ? "" : ' <span class="font-normal text-ink-3">(optional)</span>'}</label>${input}</div>`;
     }
     html += `</fieldset>`;
   }
   html += `<p id="profile-error" class="hidden text-sm text-danger" role="alert"></p></form>`;
   $("panel-body").innerHTML = html;
-  $("panel-foot").innerHTML = `<button id="panel-cancel" type="button" class="px-4 py-2 rounded-lg text-sm font-medium text-ink-2 hover:bg-raise">Cancel</button>
-    <button id="panel-save" type="button" class="px-4 py-2 rounded-lg bg-accent text-on-accent text-sm font-medium hover:brightness-110 disabled:opacity-50">Save profile</button>`;
+  $("panel-foot").innerHTML = `<button id="panel-cancel" type="button" class="btn btn-ghost">Cancel</button>
+    <button id="panel-save" type="button" class="btn btn-primary">Save profile</button>`;
   $("panel-cancel").onclick = () => { panelEditing = false; renderPanel(); };
   $("panel-save").onclick = saveProfile;
   $("profile-form").onsubmit = (e) => { e.preventDefault(); saveProfile(); };
@@ -915,8 +914,9 @@ async function slowTick() {
 // ---- Tabs (each sidebar item shows its own panel; the URL hash remembers the tab) ----
 const TABS = { overview: "Overview", vitals: "Vitals", reminders: "Reminders", memory: "Memory & routine",
   alerts: "Alerts", location: "Location & home", reports: "Reports" };
-const ACTIVE = ["bg-raise", "border-accent", "text-ink", "font-medium"];
-const INACTIVE = ["border-transparent", "text-ink-2"];
+// Active styling comes from .nav-link[aria-current="page"] in css/sage.css
+const ACTIVE = [];
+const INACTIVE = [];
 function showTab(name) {
   if (!TABS[name]) name = "overview";
   document.querySelectorAll("[data-panel]").forEach((p) => p.classList.toggle("hidden", p.dataset.panel !== name));

@@ -1,0 +1,244 @@
+name: "SAGE"
+philosophy: "A letter from home that happens to carry live safety data. Warm paper, ink-dark text, one fountain-pen blue for the things you can act on. Calm is the default state; colour arrives only when something about the person you love has changed."
+primary_mode: "light"
+brand_domain: "family caregiving for an elderly parent: wearable fall detection, vitals trends, voice medicine reminders"
+brand_type: "ui-rich"
+mono_for_code: false
+mono_for_metrics: false
+
+# ── PRIMITIVES ──
+primitives:
+  colors:
+    paper:          # warm neutral ramp (light end = paper, dark end = lamp-lit charcoal)
+      50: "#FFFDF8"
+      100: "#FBF8F2"
+      150: "#F6F2EA"
+      200: "#EFE9DE"
+      300: "#E3DCCF"
+      400: "#CFC6B6"
+      500: "#968D81"
+      600: "#6B645A"
+      700: "#57514A"
+      800: "#36312C"
+      850: "#2A2622"
+      900: "#201D1A"
+      925: "#1B1916"
+      950: "#171513"
+    ink:            # fountain-pen blue-black accent ramp
+      50: "#E4EAF7"
+      100: "#CCD8F1"
+      300: "#9DB6F2"
+      500: "#2D4F9E"
+      600: "#244286"
+      900: "#14213F"
+    green: { 50: "#E3EEE2", 300: "#86C79A", 500: "#3B7549", 900: "#1E3324" }
+    amber: { 50: "#F6E9D2", 300: "#E3AE5B", 500: "#8F570B", 900: "#3A2A12" }
+    red:   { 50: "#F7E0DB", 300: "#F0907F", 500: "#B3261E", 600: "#C0352A", 900: "#3D1D18" }
+    text:  { light: "#23201B", dark: "#EFEAE1", dark2: "#B9B1A6" }
+  spacing: [0, 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 96]
+  radii: [0, 4, 8, 14, 20, 999]
+
+# ── SEMANTIC TOKENS ──
+tokens:
+  colors:
+    light:
+      background: "{paper.150}"
+      surface1: "{paper.50}"
+      surface2: "{paper.100}"
+      surface3: "{paper.200}"
+      border: "{paper.300}"
+      border_visible: "{paper.400}"
+      text1: "{text.light}"
+      text2: "{paper.700}"
+      text3: "{paper.600}"
+      text4: "{paper.400}"
+      accent: "{ink.500}"
+      accent_hover: "{ink.600}"
+      on_accent: "#FFFFFF"
+      accent_subtle: "{ink.50}"
+      success: "{green.500}"
+      warning: "{amber.500}"
+      error: "{red.500}"
+      error_solid: "{red.500}"
+      success_bg: "{green.50}"
+      warning_bg: "{amber.50}"
+      error_bg: "{red.50}"
+    dark:
+      background: "{paper.950}"
+      surface1: "{paper.900}"
+      surface2: "{paper.925}"
+      surface3: "{paper.850}"
+      border: "{paper.800}"
+      border_visible: "#4A443D"
+      text1: "{text.dark}"
+      text2: "{text.dark2}"
+      text3: "{paper.500}"
+      text4: "{paper.600}"
+      accent: "{ink.300}"
+      accent_hover: "{ink.100}"
+      on_accent: "{ink.900}"
+      accent_subtle: "rgba(157,182,242,0.13)"
+      success: "{green.300}"
+      warning: "{amber.300}"
+      error: "{red.300}"
+      error_solid: "{red.600}"
+      success_bg: "rgba(134,199,154,0.12)"
+      warning_bg: "rgba(227,174,91,0.13)"
+      error_bg: "rgba(240,144,127,0.14)"
+    info: "same as accent (SAGE never needs a fourth status hue)"
+
+  spacing:
+    2xs: 2
+    xs: 4
+    sm: 8
+    md: 16
+    lg: 24
+    xl: 32
+    2xl: 48
+    3xl: 64
+    4xl: 96
+
+  radii:
+    element: 4
+    control: 8
+    component: 14
+    container: 20
+    pill: 999
+
+  typography:
+    display: { family: "Newsreader", size: "28px", weight: 500, line_height: 1.15, opsz: "auto" }
+    body: { family: "Hanken Grotesk", size: "16px", weight: 400, line_height: 1.55 }
+    mono: { family: "IBM Plex Mono", size: "13px", weight: 400, note: "declared for code only; never loaded on product screens" }
+    scale_ratio: 1.2
+    scale:
+      display:    { size: 34, lh: 1.1,  ls: "-0.01em", weight: 500, family: display, use: "landing hero, page title on sign-in" }
+      heading:    { size: 28, lh: 1.15, ls: "-0.005em", weight: 500, family: display, use: "screen title (Overview, Vitals)" }
+      subheading: { size: 20, lh: 1.25, ls: "0",       weight: 500, family: display, use: "card titles, panel titles" }
+      metric:     { size: 34, lh: 1.05, ls: "-0.02em", weight: 500, family: body,    use: "vital readings, counts; tabular figures" }
+      body:       { size: 16, lh: 1.55, ls: "0",       weight: 400, family: body,    use: "prose, list rows" }
+      body_sm:    { size: 14, lh: 1.5,  ls: "0",       weight: 400, family: body,    use: "secondary lines, table cells" }
+      caption:    { size: 13, lh: 1.4,  ls: "0",       weight: 400, family: body,    use: "timestamps, footnotes" }
+      label:      { size: 13, lh: 1.3,  ls: "0",       weight: 600, family: body,    use: "field labels, table heads, badges; sentence case, never tracked" }
+
+  elevation:
+    strategy: "subtle"
+    light: "0 1px 2px rgba(60,44,20,0.05), 0 4px 16px -8px rgba(60,44,20,0.10)"
+    dark: "none (border + surface step only)"
+    overlay_light: "0 24px 48px -16px rgba(60,44,20,0.25)"
+    overlay_dark: "0 24px 48px -16px rgba(0,0,0,0.6)"
+
+  motion:
+    personality: "smooth"
+    easing: "cubic-bezier(0.2, 0, 0, 1)"
+    duration_fast: "160ms"
+    duration_normal: "240ms"
+    animates: ["opacity", "transform", "background-color", "border-color", "color"]
+
+  hero_stage:
+    preset: "flat-blank"
+    observed_style:
+      description: "Derived. Plain warm paper field; the hero subject is the product's own family note (a real-looking status card built from live dashboard components) set beside the sign-in form. No glow, no gradient, no orbit rings."
+      where_used: ["sign-in hero"]
+    background:
+      medium: "absent"
+      color_mode: "brand-tinted-neutral"
+      saturation: "flat"
+      light_source: "none"
+      falloff: "soft"
+      vignette: "off"
+      texture: "clean"
+      motion: "static"
+      intensity: "subtle"
+      safe_zone: "full-bleed"
+      color_palette: ["#F6F2EA", "#FFFDF8", "#E3DCCF", "#2D4F9E", "#23201B"]
+    hero:
+      subject: "composition"
+      form: "status-note"
+      placement: "right"
+      scale: "medium"
+      tint: "none"
+    relation:
+      type: "shadow-only"
+      bleed: 0
+    disclaimer: "Derived design for a fictional-free real project; no external brand assets."
+
+  iconography:
+    observed_style:
+      description: "Material Symbols Outlined already wired through the dashboard script by glyph name. Set at weight 300, optical size 24, so strokes sit closer to the Newsreader hairlines."
+      stroke_weight: "regular"
+      corner_treatment: "soft"
+      fill_style: "outline"
+      form_language: "geometric"
+      visual_density: "balanced"
+    fallback_kit:
+      name: "Material Symbols Outlined"
+      weight: "300"
+      match_score: "high"
+      match_reasoning: "The product already renders every icon by Material Symbols ligature name from JavaScript, so swapping kits would break wiring. Weight 300 softens it toward the serif voice; Phosphor light would be second choice on a greenfield build."
+      cdn: "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,300..500,0..1"
+      icon_class_prefix: "material-symbols-outlined"
+    disclaimer: "Icons are Google Material Symbols under Apache 2.0."
+
+components:
+  button_primary:
+    source: "derived"
+    background: "{accent}"
+    color: "{on_accent}"
+    height: "40px (44px hit area)"
+    padding: "0 16px"
+    radius: "{radii.control}"
+    font_weight: 600
+    hover: { background: "{accent_hover}" }
+    active: { transform: "translateY(1px)" }
+    disabled: { background: "{surface3}", color: "{text3}", cursor: "not-allowed" }
+  button_secondary:
+    source: "derived"
+    background: "{surface1}"
+    border: "1px solid {border_visible}"
+    color: "{text1}"
+  button_ghost:
+    source: "derived"
+    background: "transparent"
+    color: "{text2}"
+    hover: { background: "{surface3}", color: "{text1}" }
+  button_urgent:
+    source: "observed"
+    background: "{error_solid}"
+    color: "#FFFFFF"
+    note: "Only for calling family or emergency services."
+  card:
+    source: "observed"
+    background: "{surface1}"
+    border: "1px solid {border}"
+    radius: "{radii.component}"
+    shadow: "{elevation.light} / none in dark"
+    padding: "24px"
+  badge:
+    source: "observed"
+    radius: "{radii.pill}"
+    padding: "2px 10px"
+    font: "label"
+    tones: ["ok -> success on success_bg", "warn -> warning on warning_bg", "danger -> error on error_bg", "info -> accent on accent_subtle", "neutral -> text2 on surface3"]
+  input:
+    source: "observed"
+    background: "{surface2}"
+    border: "1px solid {border_visible}"
+    radius: "{radii.control}"
+    height: "44px"
+    focus: "border {accent} + 3px ring accent at 20%"
+  nav_item:
+    source: "observed"
+    active: "accent_subtle fill, accent text, 3px accent bar on the left"
+
+app_screen:
+  archetype: "dashboard"
+  frame: "browser"
+  frame_params:
+    url: "localhost:5000/dashboard"
+    title: "SAGE | Family Dashboard"
+  content_seed: "Kamala, 78, at home in Pune; her son Rohan checks heart rate, SpO2, falls and medicines"
+  required_tokens_checklist:
+    - "background, surface1, surface2, surface3, border, border_visible"
+    - "text1, text2, text3, text4"
+    - "accent, accent_subtle, success, warning, error"
+    - "all typography scale tokens"
