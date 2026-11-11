@@ -10,12 +10,14 @@
     document.documentElement.setAttribute("data-theme",t)})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,300..400,0..1&display=block" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/sage.css') }}" rel="stylesheet">
   <link href="{{ url_for('static', filename='css/landing.css') }}" rel="stylesheet">
 </head>
 <body>
+  <main id="top">
+  <div class="stage">
   <header class="wrap topbar">
     <a class="wordmark" href="#top" aria-label="SAGE home"><span class="material-symbols-outlined filled" aria-hidden="true">favorite</span>SAGE</a>
     <div class="top-actions">
@@ -24,12 +26,15 @@
     </div>
   </header>
 
-  <main id="top">
     <section class="wrap hero" aria-labelledby="hero-title">
       <div>
-        <h1 id="hero-title">Care that stays close, even from afar.</h1>
+        <h1 id="hero-title">Care that stays close, <span class="lit">even from afar.</span></h1>
         <p class="hero-lead">A simple wristband and a family dashboard that keep everyday care close.</p>
         <p class="assurance"><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>About ₹2,000 for the hardware. No subscription.</p>
+        <div class="hero-actions">
+          <a class="pill pill-primary" href="#sos"><span class="material-symbols-outlined filled" aria-hidden="true">sos</span>Try the SOS demo</a>
+          <a class="pill pill-ghost" href="#how-it-works">How it works</a>
+        </div>
 
         <!-- Signature: a live example of the family view. Works as a static note without JavaScript;
              with it, the tabs switch the day and the note reacts the way the dashboard does. -->
@@ -66,6 +71,7 @@
         </form>
       </aside>
     </section>
+    </div>
 
     <section class="section" id="story">
       <div class="wrap story">
@@ -92,7 +98,7 @@
         </div>
 
         <!-- Try the SOS safety net: the escalation from the ledger above, played out step by step. -->
-        <div class="sos" id="sos">
+        <div class="sos stage" id="sos">
           <div class="sos-intro">
             <h3>Try the SOS safety net</h3>
             <p>Press the button the way Kamala would. Nothing is sent; this only shows the order things happen in.</p>

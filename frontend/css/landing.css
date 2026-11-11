@@ -1,8 +1,8 @@
-/* Hallmark · shape: Split sign-in · genre: editorial · theme: custom (Hue: sage-design, "Letter from home") · redesign: full
- * paper: oklch(96% 0.012 85) · accent: oklch(45% 0.13 265) · display: Newsreader · body: Hanken Grotesk
+/* Hallmark · shape: Split sign-in · genre: atmospheric · theme: custom (Hue: sage-design, "Night garden", after ZeBeyond) · redesign: retheme
+ * canvas: night green stage over mint paper · accent: mint, coral second accent · display: Plus Jakarta Sans · body: Hanken Grotesk
  * nav: wordmark, one link, theme toggle · footer: one line, wordmark left · hero: Split, sign-in card right
  * signature: the morning note from Kamala's band, set in the dashboard's own rows · sections: hero, story, features ledger, steps, privacy, footer
- * axes: warm-paper/text-serif/ink-blue · posture: Split · contrast: pass · v2.0.0 */
+ * axes: night-green/geometric-sans/mint-glow · posture: Split · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V4 · weakest: S, features read like any wearable; set them as a ledger of plain promises instead of six icon tiles */
 /* Hallmark · dropped the Tailwind CDN script on /login (the page now uses plain CSS from sage.css and this file) · reworded "SAGE helps families stay in the loop with a simple wristband and a thoughtful family dashboard, so everyday care feels a little less far away." to "A simple wristband and a family dashboard that keep everyday care close." · 19 and 58 name it */
 /* Tokens live in sage.css (linked first). This file only lays out the sign-in page. */
@@ -11,8 +11,37 @@
 
 /* Top bar */
 .topbar { display: flex; align-items: center; justify-content: space-between; min-height: 72px; border-bottom: 1px solid rgb(var(--line)); }
-.wordmark { display: inline-flex; align-items: center; gap: var(--space-sm); text-decoration: none; font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; color: rgb(var(--ink)); }
-.wordmark .material-symbols-outlined { color: rgb(var(--accent)); font-size: 26px; }
+.wordmark { display: inline-flex; align-items: center; gap: var(--space-sm); text-decoration: none; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: rgb(var(--ink)); }
+.wordmark .material-symbols-outlined { color: rgb(var(--accent-2)); font-size: 26px; }
+
+/* Stage: the glowing night panel behind the top bar and hero, and behind the SOS demo (after ZeBeyond).
+   .stage carries the dark tokens (sage.css), so it looks the same in either theme. */
+.stage { position: relative; isolation: isolate; overflow: clip; background: rgb(var(--canvas)); color: rgb(var(--ink)); }
+.stage::before, .stage::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.stage::before {
+  background:
+    radial-gradient(55% 60% at 72% -5%, rgb(var(--glow) / .38), transparent 70%),
+    radial-gradient(35% 45% at 8% 35%, rgb(var(--glow-2) / .14), transparent 70%);
+}
+.stage::after {
+  background-image: linear-gradient(rgb(var(--ink) / .05) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--ink) / .05) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(75% 70% at 55% 15%, currentColor, transparent 85%);
+}
+.hero h1 .lit { display: block; color: rgb(var(--accent)); }
+
+/* Pill actions (the hero's two calls to action) */
+.hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl); }
+.pill {
+  display: inline-flex; align-items: center; gap: var(--space-sm); min-height: 48px; padding: 0 var(--space-lg);
+  border-radius: var(--radius-pill); border: 1px solid transparent; font-weight: 600; text-decoration: none;
+  transition: background-color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
+}
+.pill:active { transform: translateY(1px); }
+.pill-primary { background: rgb(var(--accent)); color: rgb(var(--on-accent)); box-shadow: 0 10px 28px -10px rgb(var(--glow) / .8); }
+.pill-primary:hover { background: rgb(var(--accent-hover)); }
+.pill-ghost { border-color: rgb(var(--line-strong)); color: rgb(var(--ink)); }
+.pill-ghost:hover { background: rgb(var(--raise)); }
 .top-actions { display: flex; align-items: center; gap: var(--space-xs); }
 .quiet-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control); text-decoration: none; color: rgb(var(--ink-2)); font-size: 0.875rem; font-weight: 500; transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease); }
 .quiet-link:hover { background: rgb(var(--raise)); color: rgb(var(--ink)); }
@@ -20,7 +49,7 @@
 
 /* Hero: words left, sign-in right */
 .hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: var(--space-3xl); align-items: start; padding-block: var(--space-3xl) var(--space-4xl); }
-.hero h1 { font-size: clamp(2.75rem, 5.4vw, 4.25rem); line-height: 1.04; letter-spacing: -0.02em; max-width: 13ch; text-wrap: balance; }
+.hero h1 { font-size: clamp(2.75rem, 5.4vw, 4.5rem); line-height: 1.02; letter-spacing: -0.04em; max-width: 13ch; text-wrap: balance; }
 .hero-lead { margin: var(--space-lg) 0 0; max-width: 34rem; font-size: 1.125rem; line-height: 1.6; color: rgb(var(--ink-2)); }
 .assurance { display: flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-md); font-size: 0.875rem; color: rgb(var(--ink-2)); }
 .assurance .material-symbols-outlined { color: rgb(var(--ok)); font-size: 20px; }
@@ -28,7 +57,7 @@
 /* Signature: the morning note, drawn with the dashboard's own row pattern */
 .note { margin-top: var(--space-2xl); max-width: 30rem; background: rgb(var(--surface)); border: 1px solid rgb(var(--line)); border-radius: var(--radius-component); box-shadow: var(--shadow-card); }
 .note-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-md) var(--space-lg); border-bottom: 1px solid rgb(var(--line)); }
-.note-head .note-title { font-family: var(--font-display); font-size: 1.25rem; }
+.note-head .note-title { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 1.125rem; }
 .note-head .note-meta { font-size: 0.8125rem; color: rgb(var(--ink-3)); }
 .note-row { display: flex; align-items: center; gap: var(--space-md); padding: var(--space-md) var(--space-lg); }
 .note-row + .note-row { border-top: 1px solid rgb(var(--line)); }
@@ -150,19 +179,19 @@
 /* Story: copy left, the family's promise set large right */
 .story { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-3xl); align-items: center; }
 .story p { color: rgb(var(--ink-2)); margin: var(--space-md) 0 0; max-width: 34rem; }
-.promise { font-family: var(--font-display); font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.2; color: rgb(var(--ink)); padding-top: var(--space-lg); border-top: 1px solid rgb(var(--line-strong)); max-width: 18ch; text-wrap: balance; }
+.promise { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.03em; font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.2; color: rgb(var(--ink)); padding-top: var(--space-lg); border-top: 3px solid rgb(var(--accent-2)); max-width: 18ch; text-wrap: balance; }
 
 /* Features as a ledger: title left, the plain promise right */
 .ledger { margin-top: var(--space-2xl); border-top: 1px solid rgb(var(--line-strong)); }
-.ledger-row { display: grid; grid-template-columns: 48px minmax(0, 18rem) minmax(0, 1fr); gap: var(--space-lg); align-items: baseline; padding-block: var(--space-lg); border-bottom: 1px solid rgb(var(--line)); }
-.ledger-row .material-symbols-outlined { color: rgb(var(--accent)); font-size: 26px; align-self: start; }
+.ledger-row { display: grid; grid-template-columns: 44px minmax(0, 18rem) minmax(0, 1fr); gap: var(--space-lg); align-items: center; padding-block: var(--space-lg); border-bottom: 1px solid rgb(var(--line)); }
+.ledger-row .material-symbols-outlined { display: grid; place-items: center; width: 44px; height: 44px; border-radius: var(--radius-control); background: var(--accent-soft); color: rgb(var(--accent)); font-size: 24px; align-self: start; }
 .ledger-row h3 { font-size: 1.375rem; line-height: 1.25; }
 .ledger-row p { margin: 0; color: rgb(var(--ink-2)); max-width: 38rem; }
 
 /* Steps */
 .steps { list-style: none; margin: var(--space-2xl) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xl); counter-reset: step; }
-.step { counter-increment: step; padding-top: var(--space-lg); border-top: 2px solid rgb(var(--ink)); }
-.step::before { content: counter(step); display: block; font-family: var(--font-display); font-size: 2.5rem; line-height: 1; color: rgb(var(--accent)); }
+.step { counter-increment: step; padding-top: var(--space-lg); border-top: 3px solid rgb(var(--accent)); }
+.step::before { content: "0" counter(step); display: block; font-family: var(--font-display); font-weight: 800; font-size: 2.75rem; line-height: 1; letter-spacing: -0.04em; color: rgb(var(--accent)); }
 .step h3 { margin-top: var(--space-md); font-size: 1.375rem; line-height: 1.25; }
 .step p { margin: var(--space-sm) 0 0; color: rgb(var(--ink-2)); font-size: 0.9375rem; }
 
