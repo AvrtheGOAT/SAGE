@@ -1,0 +1,47 @@
+{#- Cookie banner and analytics. Only rendered when ANALYTICS_PROVIDER and ANALYTICS_ID are set in .env:
+    without analytics SAGE sets only the strictly necessary sign-in cookie, which needs no banner.
+    Analytics loads only after "Allow analytics", and the choice is remembered on this device. -#}
+{%- if analytics %}
+  <div class="consent" id="consent" role="dialog" aria-modal="false" aria-labelledby="consent-title" aria-describedby="consent-body" hidden>
+    <div class="consent-text">
+      <p class="consent-title" id="consent-title">A quick question about cookies</p>
+      <p id="consent-body">We’d like to count visits to these public pages so we know what helps families. Nothing is collected on the family dashboard, and the sign-in cookie is always on because SAGE can’t work without it. <a href="/privacy#cookies">Read more</a></p>
+    </div>
+    <div class="consent-actions">
+      <button type="button" class="btn btn-secondary" data-consent="essential">Only essential</button>
+      <button type="button" class="btn btn-primary" data-consent="analytics">Allow analytics</button>
+    </div>
+  </div>
+  <script>
+  (function () {
+    var KEY = "sage-consent", box = document.getElementById("consent");
+    var cfg = {{ analytics | tojson }};
+    function load() {
+      if (window.__sageAnalytics) return; window.__sageAnalytics = true;
+      var s = document.createElement("script"); s.async = true;
+      if (cfg.provider === "plausible") {
+        s.defer = true; s.src = "https://plausible.io/js/script.js"; s.setAttribute("data-domain", cfg.id);
+      } else {
+        s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(cfg.id);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { dataLayer.push(arguments); };
+        gtag("js", new Date()); gtag("config", cfg.id, { anonymize_ip: true });
+      }
+      document.head.appendChild(s);
+    }
+    function get() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
+    function set(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+    var choice = get();
+    if (choice === "analytics") load();
+    if (!choice) box.hidden = false;
+    box.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-consent]"); if (!b) return;
+      set(b.dataset.consent); box.hidden = true;
+      if (b.dataset.consent === "analytics") load(); else if (window.__sageAnalytics) location.reload();
+    });
+    document.addEventListener("click", function (e) {
+      if (e.target.closest("[data-consent-open]")) { box.hidden = false; box.querySelector("[data-consent]").focus(); }
+    });
+  })();
+  </script>
+{%- endif %}

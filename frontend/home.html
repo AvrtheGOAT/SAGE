@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+{% set title = "SAGE | A wristband and family dashboard for elders living alone" %}
+{% set description = "SAGE is a simple wristband and family dashboard for elders who live alone: fall alerts, an SOS safety net, gentle voice reminders and health trends, without recording audio." %}
+{% set path = "/" %}
+{% include "partials/head.html" %}
+  <link href="{{ url_for('static', filename='css/landing.css') }}" rel="stylesheet">
+</head>
+<body class="home">
+{% set show_nav = true %}
+{% include "partials/site-header.html" %}
+
+  <main id="main">
+    <!-- Hero: a band made of light that becomes a heart, then a heartbeat (js/orb.js, Three.js).
+         Without WebGL, or with reduced motion, a still glow stands in. -->
+    <section class="hero-x" aria-labelledby="hero-title">
+      <div class="orb" role="img" aria-label="A SAGE wristband drawn in points of light, turning into a heart and then a heartbeat line.">
+        <canvas id="orb-canvas" aria-hidden="true"></canvas>
+      </div>
+      <div class="wrap hero-x-inner">
+        <div class="hero-copy">
+          <h1 id="hero-title">Care that stays close, <span class="lit">even from afar.</span></h1>
+          <p class="hero-lead">A simple wristband and a family dashboard for elders who live alone. Falls, SOS and missed medicines reach family in seconds.</p>
+          <div class="hero-actions" id="hero-actions">
+            <a class="pill pill-primary" href="/login">Get started<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a>
+            <a class="pill pill-ghost" href="#sos"><span class="material-symbols-outlined filled" aria-hidden="true">sos</span>Try the SOS demo</a>
+          </div>
+          <p class="assurance"><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>About ₹2,000 for the hardware. No subscription.</p>
+        </div>
+        <ol class="orb-steps" aria-label="What the light shows" hidden>
+          <li data-shape="0">The band</li>
+          <li data-shape="1">Her heart</li>
+          <li data-shape="2">Her day, in rhythm</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section see" id="see" aria-labelledby="see-title">
+      <div class="wrap see-grid">
+        <div>
+          <h2 id="see-title">What the family sees.</h2>
+          <p class="section-lead">One calm screen that tells Rohan how his mother is doing right now, and speaks up only when something needs him. Try the three example days.</p>
+        </div>
+        <!-- Signature: a live example of the family view. Works as a static note without JavaScript;
+             with it, the tabs switch the day and the note reacts the way the dashboard does. -->
+        <div class="note" id="demo">
+          <div class="note-head">
+            <span class="note-title">What Rohan sees</span>
+            <span id="demo-badge" class="badge ok">All good</span>
+          </div>
+          <div class="note-tabs" role="tablist" aria-label="Choose an example day" hidden>
+            <button type="button" role="tab" class="note-tab" data-scene="calm" aria-selected="true">A calm day</button>
+            <button type="button" role="tab" class="note-tab" data-scene="missed" aria-selected="false">A missed medicine</button>
+            <button type="button" role="tab" class="note-tab" data-scene="fall" aria-selected="false">A fall</button>
+          </div>
+          <div id="demo-rows" class="note-rows" role="tabpanel" aria-live="polite">
+            <div class="note-row"><span class="note-icon ok"><span class="material-symbols-outlined" aria-hidden="true">wb_sunny</span></span><div><div class="note-label">Morning check-in</div><div class="note-value">All is well</div></div></div>
+            <div class="note-row"><span class="note-icon ok"><span class="material-symbols-outlined" aria-hidden="true">medication</span></span><div><div class="note-label">Medicines</div><div class="note-value">Taken, confirmed by voice</div></div></div>
+            <div class="note-row"><span class="note-icon info"><span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span></span><div><div class="note-label">Heart rate</div><div class="note-value">A trend, not a diagnosis</div></div></div>
+          </div>
+          <p class="note-foot">An example of the family dashboard, not live data.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="story">
+      <div class="wrap story">
+        <div>
+          <h2>For the days you can’t be right there.</h2>
+          <p>Kamala is 78 and lives alone. Her son Rohan wants to know she’s doing okay, without making every day feel like a check-up.</p>
+          <p>SAGE quietly helps them stay connected: a gentle check-in, a reminder, and a family update when something seems out of the ordinary for Kamala.</p>
+        </div>
+        <p class="promise">Supportive, not intrusive. Family stays in control.</p>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="wrap">
+        <h2>Quiet support, when it matters.</h2>
+        <p class="section-lead">Useful signals and simple ways to stay connected, without pretending to replace a doctor.</p>
+        <div class="ledger">
+          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">personal_injury</span><h3>Fall detection</h3><p>The band looks for impact followed by stillness and sounds a siren on the band.</p></article>
+          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">sos</span><h3>SOS, with a safety net</h3><p>One press starts a 5-second cancel window, then alerts family. If nobody responds, it escalates to a backup contact, then emergency services. Family decides first.</p></article>
+          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span><h3>Everyday health trends</h3><p>Live heart rate and blood oxygen (SpO2) from the band, for trends and alerts, not diagnosis.</p></article>
+          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">record_voice_over</span><h3>Hindi and English voice help</h3><p>A bilingual voice assistant offers medicine reminders and a friendly morning check-in.</p></article>
+          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">insights</span><h3>Changes from their usual</h3><p>Notices routine changes, like missed reminders or slower replies, and suggests mentioning them to a doctor. It never diagnoses dementia.</p></article>
+          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">menu_book</span><h3>Plain words, past weeks</h3><p>An AI care agent explains changes to family in plain language and remembers previous weeks. One account can look after several elders.</p></article>
+        </div>
+
+        <!-- Try the SOS safety net: the escalation from the ledger above, played out step by step. -->
+        <div class="sos stage" id="sos">
+          <div class="sos-intro">
+            <h3>Try the SOS safety net</h3>
+            <p>Press the button the way Kamala would. Nothing is sent; this only shows the order things happen in.</p>
+            <div class="sos-controls" hidden>
+              <button type="button" id="sos-press" class="sos-press" aria-describedby="sos-status"><span class="material-symbols-outlined filled" aria-hidden="true">sos</span><span>Press SOS</span></button>
+              <button type="button" id="sos-cancel" class="btn btn-secondary" hidden>Cancel, I’m fine</button>
+              <button type="button" id="sos-respond" class="btn btn-secondary" hidden><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>I’m checking on her</button>
+              <button type="button" id="sos-reset" class="btn btn-ghost" hidden>Start again</button>
+            </div>
+            <p id="sos-status" class="sos-status" role="status" aria-live="polite">One press starts a 5-second cancel window.</p>
+          </div>
+          <ol class="sos-steps" id="sos-steps">
+            <li data-step="cancel"><span class="sos-dot"><span class="sos-count" id="sos-count">5</span></span><div><strong>Cancel window</strong><span>5 seconds to cancel a press by mistake</span></div></li>
+            <li data-step="family"><span class="sos-dot"><span class="material-symbols-outlined" aria-hidden="true">family_restroom</span></span><div><strong>Family alerted</strong><span>The dashboard and the alarm sound</span></div></li>
+            <li data-step="backup"><span class="sos-dot"><span class="material-symbols-outlined" aria-hidden="true">contact_phone</span></span><div><strong>Backup contact</strong><span>If nobody in the family responds</span></div></li>
+            <li data-step="services"><span class="sos-dot"><span class="material-symbols-outlined" aria-hidden="true">local_hospital</span></span><div><strong>Emergency services</strong><span>Only if nobody responds at all</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+      <div class="wrap">
+        <h2>How it works</h2>
+        <p class="section-lead">A small, steady presence in the background of family life.</p>
+        <ol class="steps">
+          <li class="step"><h3>Wear the band</h3><p>Your loved one wears a simple wristband that can notice a fall, track health trends, and offer reminders.</p></li>
+          <li class="step"><h3>SAGE watches quietly</h3><p>It follows the agreed signals and usual routines, without recording or storing audio.</p></li>
+          <li class="step"><h3>Family is told what matters</h3><p>Family gets useful alerts and clear context in the dashboard, with the choice of what to do next.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section" id="privacy">
+      <div class="wrap privacy">
+        <div>
+          <h2>Care without listening in.</h2>
+          <p class="section-lead">SAGE is designed to support family care while respecting the person wearing the band.</p>
+        </div>
+        <ul class="privacy-points">
+          <li><span class="material-symbols-outlined" aria-hidden="true">mic_off</span><span>Audio is never recorded or stored.</span></li>
+          <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span><span>Only useful events, like “medicine taken,” are saved.</span></li>
+          <li><span class="material-symbols-outlined" aria-hidden="true">family_restroom</span><span>Family decides first if an SOS alert needs escalation.</span></li>
+          <li><span class="material-symbols-outlined" aria-hidden="true">payments</span><span>About ₹2,000 hardware cost. No subscription.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section closing" aria-labelledby="closing-title">
+      <div class="wrap closing-inner">
+        <h2 id="closing-title">Set it up in an afternoon.</h2>
+        <p class="section-lead">Create the family account, add the person you look after, and pair the band. Everything else stays quiet until it matters.</p>
+        <div class="hero-actions">
+          <a class="pill pill-primary" href="/login">Get started<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a>
+          <a class="pill pill-ghost" href="/privacy">Read the privacy policy</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky call to action on phones, shown once the hero's own buttons scroll away -->
+  <div class="mobile-cta" id="mobile-cta" hidden>
+    <a class="pill pill-ghost" href="#sos">SOS demo</a>
+    <a class="pill pill-primary" href="/login">Get started</a>
+  </div>
+
+{% include "partials/site-footer.html" %}
+  <script>SageMotion.blurFade(".see-grid > *, .story > *, #features h2, #features .section-lead, .ledger-row, .sos, #how-it-works h2, #how-it-works .section-lead, .step, .privacy > div, .privacy-points li, .closing-inner > *");</script>
+  <script>
+  // Sticky mobile CTA: appears when the hero buttons leave the screen, hides near the closing call to action.
+  (function () {
+    var bar = document.getElementById("mobile-cta"), hero = document.getElementById("hero-actions"), end = document.querySelector(".closing");
+    if (!bar || !("IntersectionObserver" in window)) return;
+    var heroVisible = true, endVisible = false;
+    function draw() { bar.hidden = heroVisible || endVisible; }
+    new IntersectionObserver(function (e) { heroVisible = e[0].isIntersecting; draw(); }).observe(hero);
+    new IntersectionObserver(function (e) { endVisible = e[0].isIntersecting; draw(); }).observe(end);
+  })();
+  </script>
+  <!-- React islands for the two demos (no build step). If these fail to load, the static markup stays. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js" crossorigin></script>
+  <script src="{{ url_for('static', filename='js/landing-react.js') }}"></script>
+  <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }</script>
+  <script type="module" src="{{ url_for('static', filename='js/orb.js') }}"></script>
+</body>
+</html>

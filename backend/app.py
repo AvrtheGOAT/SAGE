@@ -43,7 +43,25 @@ DEVICE_KEY = os.getenv("DEVICE_KEY", "")
 if not DEVICE_KEY:
     print("[auth] DEVICE_KEY not set in .env: device addresses are open to anyone on the network.")
 
-PUBLIC = {"/login", "/api/auth/status", "/api/auth/login", "/api/auth/setup", "/health", "/api/status"}
+PUBLIC = {"/", "/login", "/privacy", "/terms", "/robots.txt", "/sitemap.xml", "/favicon.ico", "/site.webmanifest",
+          "/api/auth/status", "/api/auth/login", "/api/auth/setup", "/health", "/api/status"}
+
+# Public pages listed in sitemap.xml (path, change frequency, priority).
+SITEMAP = [("/", "monthly", "1.0"), ("/login", "yearly", "0.5"), ("/privacy", "yearly", "0.3"), ("/terms", "yearly", "0.3")]
+
+# Optional analytics, off unless set in .env. Loaded only on public pages, and only after the visitor
+# accepts the cookie banner. ANALYTICS_PROVIDER = plausible | ga4; ANALYTICS_ID = your site domain
+# (Plausible) or measurement ID like G-XXXXXXX (GA4). SITE_URL = https://your-domain (for canonical/OG links).
+ANALYTICS = {"provider": os.getenv("ANALYTICS_PROVIDER", "").strip().lower(), "id": os.getenv("ANALYTICS_ID", "").strip()}
+if ANALYTICS["provider"] not in ("plausible", "ga4") or not ANALYTICS["id"]:
+    ANALYTICS = None
+
+
+@app.context_processor
+def site_context():
+    site_url = (os.getenv("SITE_URL") or request.url_root).rstrip("/")
+    # CONTACT_EMAIL: shown on the privacy policy and terms as the address for questions and data requests.
+    return {"site_url": site_url, "analytics": ANALYTICS, "contact_email": os.getenv("CONTACT_EMAIL", "").strip()}
 # The team's firmware doesn't send the key yet. WEARABLE_KEY_OPTIONAL=1 lets POST /readings in without it
 # (fine on your own hotspot for the demo; add the header to the firmware to switch this off).
 WEARABLE_KEY_OPTIONAL = os.getenv("WEARABLE_KEY_OPTIONAL", "0") == "1"
@@ -56,6 +74,8 @@ DEVICE_ROUTES = [("POST", "/readings"), ("POST", "/api/wearable"), ("POST", "/ap
 def require_login():
     path, method = request.path, request.method
     if path in PUBLIC or path.startswith("/static/"):
+        return None
+    if request.url_rule is None:   # no such page: let the custom 404 answer instead of the sign-in redirect
         return None
     if any(method == m and path.startswith(p) for m, p in DEVICE_ROUTES):
         sent = request.headers.get("X-Device-Key", "")
@@ -180,10 +200,57 @@ def put_profile(kind):
 
 @app.get("/")
 def dashboard():
-    """One elder's dashboard (frontend/index.html). Without ?p=<elder id> go to the profiles page."""
+    """Visitors see the landing page (frontend/home.html). Signed in: one elder's dashboard
+    (frontend/index.html); without ?p=<elder id> go to the profiles page."""
+    if not (session.get("uid") and db.get_user(session["uid"])):
+        return render_template("home.html")
     if not request.args.get("p") or not db.get_patient(request.args["p"]):
         return redirect("/patients")
     return render_template("index.html")
+
+
+@app.get("/thank-you")
+def thank_you_page():
+    """Shown once, right after the family account is created."""
+    return render_template("thank-you.html")
+
+
+@app.get("/privacy")
+def privacy_page():
+    return render_template("privacy.html")
+
+
+@app.get("/terms")
+def terms_page():
+    return render_template("terms.html")
+
+
+@app.get("/robots.txt")
+def robots_txt():
+    base = (os.getenv("SITE_URL") or request.url_root).rstrip("/")
+    body = ("User-agent: *\nAllow: /$\nAllow: /login\nAllow: /privacy\nAllow: /terms\nAllow: /static/\n"
+            "Disallow: /api/\nDisallow: /patients\nDisallow: /thank-you\nDisallow: /events\n"
+            f"\nSitemap: {base}/sitemap.xml\n")
+    return Response(body, mimetype="text/plain")
+
+
+@app.get("/sitemap.xml")
+def sitemap_xml():
+    base = (os.getenv("SITE_URL") or request.url_root).rstrip("/")
+    urls = "".join(f"  <url><loc>{base}{p}</loc><changefreq>{f}</changefreq><priority>{pr}</priority></url>\n"
+                   for p, f, pr in SITEMAP)
+    xml = f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}</urlset>\n'
+    return Response(xml, mimetype="application/xml")
+
+
+@app.get("/favicon.ico")
+def favicon():
+    return app.send_static_file("icons/favicon.ico")
+
+
+@app.get("/site.webmanifest")
+def webmanifest():
+    return app.send_static_file("icons/site.webmanifest")
 
 
 @app.get("/patients")
@@ -358,6 +425,13 @@ def report_file(report_id):
 @app.delete("/api/reports/<report_id>")
 def remove_report(report_id):
     return ({"status": "ok"}, 200) if db.delete_report(report_id) else ({"error": "not found"}, 404)
+
+
+@app.errorhandler(404)
+def not_found(_e):
+    if request.path.startswith("/api/") or request.path.startswith("/events"):
+        return {"error": "not found"}, 404
+    return render_template("404.html"), 404
 
 
 @app.errorhandler(413)

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+{% set title = "Terms and conditions | SAGE" %}
+{% set description = "The terms for using the SAGE wristband and family dashboard, including what SAGE is and is not: a support tool, not a medical device or emergency service." %}
+{% set path = "/terms" %}
+{% include "partials/head.html" %}
+</head>
+<body>
+{% include "partials/site-header.html" %}
+{#- Plain-language draft. Have it reviewed by a lawyer before a public launch. -#}
+  <main id="main" class="wrap doc">
+    <header class="doc-head">
+      <h1>Terms and conditions</h1>
+      <p class="doc-meta">Last updated 11 November 2026</p>
+      <p class="doc-lead">These terms cover your use of the SAGE wristband, voice assistant and family dashboard. By creating a family account or using SAGE, you agree to them.</p>
+    </header>
+
+    <section id="what">
+      <h2>1. What SAGE is, and is not</h2>
+      <p>SAGE is a support tool that helps families keep in touch with an elder’s everyday wellbeing. It is <strong>not a medical device</strong>, does not diagnose or treat any condition, and is <strong>not a replacement for emergency services</strong>. Heart rate, SpO2 and routine changes are trends, not medical readings. In an emergency, call your local emergency number (112 in India) directly.</p>
+    </section>
+
+    <section id="limits">
+      <h2>2. Alerts depend on things outside our control</h2>
+      <p>Fall detection, SOS and reminders need the band to be charged, worn and connected, and they need working Wi-Fi, mobile networks and phones. SAGE can miss a fall or deliver an alert late. Please keep other ways of checking in, and keep emergency contacts up to date.</p>
+    </section>
+
+    <section id="account">
+      <h2>3. Your account</h2>
+      <ul>
+        <li>Keep your password private. You are responsible for what happens under your family account.</li>
+        <li>Only add family members you trust to see health information.</li>
+        <li>Use SAGE only for a person who knows about it and agrees to wear the band, or whom you are legally allowed to care for.</li>
+      </ul>
+    </section>
+
+    <section id="use">
+      <h2>4. Fair use</h2>
+      <p>Don’t misuse SAGE: no attempts to break its security, access other families’ data, or send false SOS alerts on purpose. We may suspend accounts that put others at risk.</p>
+    </section>
+
+    <section id="data">
+      <h2>5. Your data</h2>
+      <p>Your family’s information belongs to you. We handle it as described in our <a href="/privacy">privacy policy</a>.</p>
+    </section>
+
+    <section id="liability">
+      <h2>6. Liability</h2>
+      <p>We work hard to keep SAGE reliable, but provide it “as is”. To the extent the law allows, we are not liable for harm that results from a missed or delayed alert, a wrong reading, or an outage. Nothing in these terms limits rights you have under consumer protection law.</p>
+    </section>
+
+    <section id="changes">
+      <h2>7. Changes and contact</h2>
+      <p>We may update these terms and will show the new date at the top. These terms are governed by the laws of India.
+        Questions:{%- if contact_email %} <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{%- else %} contact the team that set up your SAGE band.{% endif %}</p>
+    </section>
+  </main>
+
+{% include "partials/site-footer.html" %}
+</body>
+</html>

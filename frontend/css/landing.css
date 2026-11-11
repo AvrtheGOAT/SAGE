@@ -1,61 +1,14 @@
-/* Hallmark · shape: Split sign-in · genre: atmospheric · theme: custom (Hue: sage-design, "Night garden", after ZeBeyond) · redesign: retheme
+/* Hallmark · shape: Immersive hero (3D centrepiece, after the "keep it simple? no" portfolio short) · genre: atmospheric · theme: custom (Hue: sage-design, "Night garden", after ZeBeyond) · redesign: retheme
  * canvas: night green stage over mint paper · accent: mint, coral second accent · display: Plus Jakarta Sans · body: Hanken Grotesk
- * nav: wordmark, one link, theme toggle · footer: one line, wordmark left · hero: Split, sign-in card right
- * signature: the morning note from Kamala's band, set in the dashboard's own rows · sections: hero, story, features ledger, steps, privacy, footer
- * axes: night-green/geometric-sans/mint-glow · posture: Split · contrast: pass · v2.0.0 */
+ * nav: wordmark, centred section pill, theme toggle, Sign in · footer: links to privacy and terms · hero: full-bleed particle band → heart → heartbeat, copy bottom-left
+ * signature: the band of light that becomes a heart · sections: hero, what the family sees, story, features + SOS demo, steps, privacy, closing CTA, footer
+ * axes: night-green/geometric-sans/mint-glow · posture: Immersive · contrast: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H5 E4 S4 R5 V4 · weakest: S, features read like any wearable; set them as a ledger of plain promises instead of six icon tiles */
 /* Hallmark · dropped the Tailwind CDN script on /login (the page now uses plain CSS from sage.css and this file) · reworded "SAGE helps families stay in the loop with a simple wristband and a thoughtful family dashboard, so everyday care feels a little less far away." to "A simple wristband and a family dashboard that keep everyday care close." · 19 and 58 name it */
-/* Tokens live in sage.css (linked first). This file only lays out the sign-in page. */
-
-.wrap { width: 100%; max-width: 1180px; margin-inline: auto; padding-inline: var(--space-xl); }
-
-/* Top bar */
-.topbar { display: flex; align-items: center; justify-content: space-between; min-height: 72px; border-bottom: 1px solid rgb(var(--line)); }
-.wordmark { display: inline-flex; align-items: center; gap: var(--space-sm); text-decoration: none; font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: rgb(var(--ink)); }
-.wordmark .material-symbols-outlined { color: rgb(var(--accent-2)); font-size: 26px; }
-
-/* Stage: the glowing night panel behind the top bar and hero, and behind the SOS demo (after ZeBeyond).
-   .stage carries the dark tokens (sage.css), so it looks the same in either theme. */
-.stage { position: relative; isolation: isolate; overflow: clip; background: rgb(var(--canvas)); color: rgb(var(--ink)); }
-.stage::before, .stage::after { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.stage::before {
-  background:
-    radial-gradient(55% 60% at 72% -5%, rgb(var(--glow) / .38), transparent 70%),
-    radial-gradient(35% 45% at 8% 35%, rgb(var(--glow-2) / .14), transparent 70%);
-}
-.stage::after {
-  background-image: linear-gradient(rgb(var(--ink) / .05) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--ink) / .05) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(75% 70% at 55% 15%, currentColor, transparent 85%);
-}
-.hero h1 .lit { display: block; color: rgb(var(--accent)); }
-
-/* Pill actions (the hero's two calls to action) */
-.hero-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); margin-top: var(--space-xl); }
-.pill {
-  display: inline-flex; align-items: center; gap: var(--space-sm); min-height: 48px; padding: 0 var(--space-lg);
-  border-radius: var(--radius-pill); border: 1px solid transparent; font-weight: 600; text-decoration: none;
-  transition: background-color var(--dur-micro) var(--ease), border-color var(--dur-micro) var(--ease), transform var(--dur-micro) var(--ease);
-}
-.pill:active { transform: translateY(1px); }
-.pill-primary { background: rgb(var(--accent)); color: rgb(var(--on-accent)); box-shadow: 0 10px 28px -10px rgb(var(--glow) / .8); }
-.pill-primary:hover { background: rgb(var(--accent-hover)); }
-.pill-ghost { border-color: rgb(var(--line-strong)); color: rgb(var(--ink)); }
-.pill-ghost:hover { background: rgb(var(--raise)); }
-.top-actions { display: flex; align-items: center; gap: var(--space-xs); }
-.quiet-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control); text-decoration: none; color: rgb(var(--ink-2)); font-size: 0.875rem; font-weight: 500; transition: background-color var(--dur-micro) var(--ease), color var(--dur-micro) var(--ease); }
-.quiet-link:hover { background: rgb(var(--raise)); color: rgb(var(--ink)); }
-.quiet-link:active { transform: translateY(1px); }
-
-/* Hero: words left, sign-in right */
-.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: var(--space-3xl); align-items: start; padding-block: var(--space-3xl) var(--space-4xl); }
-.hero h1 { font-size: clamp(2.75rem, 5.4vw, 4.5rem); line-height: 1.02; letter-spacing: -0.04em; max-width: 13ch; text-wrap: balance; }
-.hero-lead { margin: var(--space-lg) 0 0; max-width: 34rem; font-size: 1.125rem; line-height: 1.6; color: rgb(var(--ink-2)); }
-.assurance { display: flex; align-items: center; gap: var(--space-sm); margin-top: var(--space-md); font-size: 0.875rem; color: rgb(var(--ink-2)); }
-.assurance .material-symbols-outlined { color: rgb(var(--ok)); font-size: 20px; }
+/* Tokens live in sage.css, shared chrome in site.css. This file lays out the home page only. */
 
 /* Signature: the morning note, drawn with the dashboard's own row pattern */
-.note { margin-top: var(--space-2xl); max-width: 30rem; background: rgb(var(--surface)); border: 1px solid rgb(var(--line)); border-radius: var(--radius-component); box-shadow: var(--shadow-card); }
+.note { width: 100%; max-width: 30rem; justify-self: end; background: rgb(var(--surface)); border: 1px solid rgb(var(--line)); border-radius: var(--radius-component); box-shadow: var(--shadow-card); }
 .note-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-md); padding: var(--space-md) var(--space-lg); border-bottom: 1px solid rgb(var(--line)); }
 .note-head .note-title { font-family: var(--font-display); font-weight: 700; letter-spacing: -0.02em; font-size: 1.125rem; }
 .note-head .note-meta { font-size: 0.8125rem; color: rgb(var(--ink-3)); }
@@ -158,19 +111,6 @@
 }
 @keyframes sos-beat { 50% { transform: scale(1); } }
 
-/* Sign-in card */
-.auth-card { background: rgb(var(--surface)); color: rgb(var(--ink)); border: 1px solid rgb(var(--line)); border-radius: var(--radius-container); box-shadow: var(--shadow-card); padding: var(--space-xl); }
-#auth-title { font-size: 1.75rem; line-height: 1.15; }
-#auth-sub { margin: var(--space-sm) 0 var(--space-lg); font-size: 0.875rem; line-height: 1.55; color: rgb(var(--ink-2)); }
-#auth-form .field { margin-bottom: var(--space-md); }
-#name-row { flex-direction: column; }
-.hidden { display: none !important; }
-#pw-hint { margin: calc(var(--space-sm) * -1) 0 var(--space-md); font-size: 0.8125rem; color: rgb(var(--ink-3)); }
-#auth-error { margin: 0 0 var(--space-md); font-size: 0.875rem; color: rgb(var(--danger)); }
-#auth-submit { width: 100%; min-height: 48px; font-size: 1rem; }
-.form-note { display: flex; align-items: center; justify-content: center; gap: var(--space-xs); margin: var(--space-md) 0 0; font-size: 0.8125rem; color: rgb(var(--ink-3)); }
-.form-note .material-symbols-outlined { font-size: 16px; }
-
 /* Sections */
 .section { padding-block: var(--space-4xl); border-top: 1px solid rgb(var(--line)); }
 .section h2 { font-size: clamp(2rem, 3.6vw, 2.75rem); line-height: 1.1; letter-spacing: -0.015em; text-wrap: balance; }
@@ -201,12 +141,8 @@
 .privacy-points li { display: flex; gap: var(--space-md); align-items: flex-start; padding-block: var(--space-md); border-bottom: 1px solid rgb(var(--line)); color: rgb(var(--ink)); }
 .privacy-points .material-symbols-outlined { color: rgb(var(--ok)); font-size: 22px; flex: none; }
 
-.footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-md); padding-block: var(--space-xl); border-top: 1px solid rgb(var(--line)); font-size: 0.8125rem; color: rgb(var(--ink-3)); }
-.footer .wordmark { font-size: 1.25rem; }
 
 @media (max-width: 60rem) {
-  .wrap { padding-inline: var(--space-lg); }
-  .hero { grid-template-columns: minmax(0, 1fr); gap: var(--space-2xl); padding-block: var(--space-2xl) var(--space-3xl); }
   .story, .privacy { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
   .ledger-row { grid-template-columns: 36px minmax(0, 1fr); }
   .ledger-row p { grid-column: 2; }
@@ -215,11 +151,53 @@
   .section { padding-block: var(--space-3xl); }
 }
 @media (max-width: 40rem) {
-  .wrap { padding-inline: var(--space-md); }
-  .quiet-link { display: none; }
-  .auth-card { padding: var(--space-lg); order: -1; }
   .note-tabs { padding-inline: var(--space-md); }
   .note-tab { padding: 0 var(--space-sm); font-size: 0.8125rem; }
   .note-row, .note-head { padding-inline: var(--space-md); }
-  .hero h1 { font-size: 2.5rem; }
+}
+
+/* ---------- Immersive hero: the band of light (js/orb.js) fills the screen, copy sits bottom-left ---------- */
+.hero-x { position: relative; isolation: isolate; min-height: calc(100svh - 72px); display: flex; align-items: flex-end; overflow: clip; }
+.hero-x::before { content: ""; position: absolute; inset: 0; z-index: -2; pointer-events: none; background: radial-gradient(50% 55% at 66% 45%, rgb(var(--glow) / var(--glow-strength)), transparent 72%); }
+.orb { position: absolute; inset: 0; z-index: -1; }
+.orb canvas { display: block; width: 100%; height: 100%; }
+.hero-x-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--space-xl); padding-block: var(--space-3xl); }
+.hero-copy { max-width: 34rem; }
+.hero-x h1 { font-size: clamp(2.5rem, 5vw, 4.25rem); line-height: 1.02; letter-spacing: -0.04em; text-wrap: balance; }
+.hero-x h1 .lit { display: block; color: rgb(var(--accent-display)); }
+.hero-lead { margin: var(--space-lg) 0 0; font-size: 1.125rem; line-height: 1.6; color: rgb(var(--ink-2)); max-width: 30rem; }
+.orb-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-xs); text-align: right; font-size: 0.875rem; color: rgb(var(--ink-3)); }
+.orb-steps li { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-sm); transition: color var(--dur-short) var(--ease); }
+.orb-steps li::after { content: ""; width: 40px; height: 2px; border-radius: 2px; background: rgb(var(--line-strong)); transform: scaleX(.6); transform-origin: right; transition: background-color var(--dur-short) var(--ease), transform var(--dur-short) var(--ease); }
+.orb-steps li.is-on { color: rgb(var(--ink)); font-weight: 600; }
+.orb-steps li.is-on::after { transform: scaleX(1); background: rgb(var(--accent-display)); }
+
+/* What the family sees: copy left, the example note right */
+.see-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-3xl); align-items: center; }
+
+/* Closing call to action */
+.closing-inner { display: flex; flex-direction: column; align-items: flex-start; }
+
+/* Sticky call to action on phones */
+.mobile-cta { display: none; }
+@media (max-width: 40rem) {
+  .mobile-cta:not([hidden]) {
+    position: fixed; z-index: 50; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: 1fr 1.4fr; gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md) calc(var(--space-sm) + env(safe-area-inset-bottom));
+    background: rgb(var(--surface) / .92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid rgb(var(--line));
+  }
+  .home .site-footer { padding-bottom: 72px; }
+}
+
+@media (max-width: 60rem) {
+  .see-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
+  .note { justify-self: stretch; max-width: none; }
+  .orb-steps { display: none; }
+}
+@media (max-width: 40rem) {
+  .hero-x { min-height: calc(100svh - 64px); }
+  .hero-x::before { background: radial-gradient(80% 45% at 50% 30%, rgb(var(--glow) / var(--glow-strength)), transparent 72%); }
+  .hero-x-inner { padding-block: var(--space-2xl); }
+  .hero-x h1 { font-size: 2.5rem; }
+  .hero-actions .pill { flex: 1 1 auto; }
 }
