@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Mask for the theme switch (js/motion-kit.js): an ink blot with ragged, soaked-in edges and a few
+       droplets. Black = the new theme shows through. Scaled up from the toggle while the theme changes. -->
+  <defs>
+    <filter id="bleed" x="-30%" y="-30%" width="160%" height="160%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="4" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="26" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <g filter="url(#bleed)" fill="#000">
+    <circle cx="100" cy="100" r="58"/>
+    <ellipse cx="148" cy="70" rx="16" ry="11"/>
+    <ellipse cx="58" cy="148" rx="14" ry="10"/>
+    <ellipse cx="150" cy="142" rx="11" ry="15"/>
+    <ellipse cx="54" cy="62" rx="12" ry="9"/>
+    <circle cx="170" cy="104" r="6"/>
+    <circle cx="30" cy="104" r="5"/>
+    <circle cx="104" cy="168" r="6"/>
+    <circle cx="96" cy="30" r="5"/>
+    <circle cx="164" cy="40" r="3.5"/>
+    <circle cx="38" cy="168" r="3"/>
+  </g>
+</svg>

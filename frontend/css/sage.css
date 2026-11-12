@@ -205,6 +205,11 @@ textarea.input { padding: var(--space-sm) 12px; min-height: 72px; }
 
 /* Theme reveal (js/motion-kit.js): the new theme is uncovered by a circle, not cross-faded. */
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+/* Ink theme switch: the new theme shows through an ink blot that grows from the toggle (js/motion-kit.js). */
+.ink-reveal::view-transition-new(root) {
+  -webkit-mask-image: url("../img/ink-mask.svg"); mask-image: url("../img/ink-mask.svg");
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
 
 /* Blur fade (js/motion-kit.js): only ever added by script, to sections still below the fold. */
 .blur-fade { transition: opacity calc(var(--dur-short) * 3) var(--ease), transform calc(var(--dur-short) * 3) var(--ease), filter calc(var(--dur-short) * 3) var(--ease); }
