@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+{% set title = "Thank you | Your SAGE family account is ready" %}
+{% set description = "Your SAGE family account is ready. Next, add the person you look after and pair their wristband." %}
+{% set path = "/thank-you" %}
+{% set noindex = true %}
+{% include "partials/head.html" %}
+</head>
+<body class="auth-page stage">
+{% set hide_signin = true %}
+{% include "partials/site-header.html" %}
+
+  <main id="main" class="wrap thanks">
+    <span class="thanks-mark" aria-hidden="true"><span class="material-symbols-outlined filled">favorite</span></span>
+    <h1>Thank you. Your family account is ready.</h1>
+    <p class="thanks-lead">SAGE is set up for your family. Three short steps and the band starts looking out for your loved one.</p>
+    <ol class="thanks-steps">
+      <li><strong>Add the person you look after.</strong> Their name, age and the medicines they take.</li>
+      <li><strong>Pair the band.</strong> Switch it on near the home Wi-Fi; readings appear on the dashboard within a minute.</li>
+      <li><strong>Add a backup contact.</strong> Someone SAGE can reach if nobody in the family answers an SOS.</li>
+    </ol>
+    <div class="hero-actions">
+      <a class="pill pill-primary" href="/patients">Add the person you look after<span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span></a>
+      <a class="pill pill-ghost" href="/privacy">How we look after your data</a>
+    </div>
+  </main>
+
+{% include "partials/site-footer.html" %}
+</body>
+</html>

@@ -1,198 +1,121 @@
 <!doctype html>
 <html lang="en" data-theme="light">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SAGE | Care that stays close</title>
-  <meta name="description" content="A simple wearable and family dashboard to help families stay close to the everyday moments that matter.">
-  <script>(function(){var t=null;try{t=localStorage.getItem("sage-theme")}catch(e){}
-    if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
-    document.documentElement.setAttribute("data-theme",t)})();</script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,300..400,0..1&display=block" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/sage.css') }}" rel="stylesheet">
-  <link href="{{ url_for('static', filename='css/landing.css') }}" rel="stylesheet">
+{% set title = "Sign in | SAGE family dashboard" %}
+{% set description = "Sign in to the SAGE family dashboard to see how the person you look after is doing: safety, vitals, medicines and alerts." %}
+{% set path = "/login" %}
+{% include "partials/head.html" %}
 </head>
-<body>
-  <main id="top">
-  <div class="stage">
-  <header class="wrap topbar">
-    <a class="wordmark" href="#top" aria-label="SAGE home"><span class="material-symbols-outlined filled" aria-hidden="true">favorite</span>SAGE</a>
-    <div class="top-actions">
-      <a class="quiet-link" href="#how-it-works">How it works</a>
-      <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme"><span id="theme-icon" class="material-symbols-outlined" aria-hidden="true">dark_mode</span></button>
-    </div>
-  </header>
+<body class="auth-page stage">
+{% set hide_signin = true %}
+{% include "partials/site-header.html" %}
 
-    <section class="wrap hero" aria-labelledby="hero-title">
-      <div>
-        <h1 id="hero-title">Care that stays close, <span class="lit">even from afar.</span></h1>
-        <p class="hero-lead">A simple wristband and a family dashboard that keep everyday care close.</p>
-        <p class="assurance"><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>About ₹2,000 for the hardware. No subscription.</p>
-        <div class="hero-actions">
-          <a class="pill pill-primary" href="#sos"><span class="material-symbols-outlined filled" aria-hidden="true">sos</span>Try the SOS demo</a>
-          <a class="pill pill-ghost" href="#how-it-works">How it works</a>
+  <main id="main" class="wrap auth-main">
+    <section class="auth-card" aria-labelledby="auth-title">
+      <form id="auth-form" novalidate>
+        <h1 id="auth-title">Sign in</h1>
+        <p id="auth-sub">Only family members you’ve added can see your loved one’s health information.</p>
+
+        <div id="name-row" class="field" hidden>
+          <label class="field-label" for="name">Your name</label>
+          <input class="input" id="name" autocomplete="name" aria-describedby="name-error">
+          <p class="field-error" id="name-error" hidden></p>
         </div>
-
-        <!-- Signature: a live example of the family view. Works as a static note without JavaScript;
-             with it, the tabs switch the day and the note reacts the way the dashboard does. -->
-        <div class="note" id="demo">
-          <div class="note-head">
-            <span class="note-title">What Rohan sees</span>
-            <span id="demo-badge" class="badge ok">All good</span>
+        <div class="field">
+          <label class="field-label" for="email">Email</label>
+          <input class="input" id="email" type="email" inputmode="email" autocomplete="email" aria-describedby="email-error">
+          <p class="field-error" id="email-error" hidden></p>
+        </div>
+        <div class="field">
+          <label class="field-label" for="password">Password</label>
+          <div class="input-wrap">
+            <input class="input" id="password" type="password" autocomplete="current-password" aria-describedby="pw-hint password-error">
+            <button type="button" class="input-reveal" id="pw-toggle" aria-label="Show password" aria-pressed="false"><span class="material-symbols-outlined" aria-hidden="true">visibility</span></button>
           </div>
-          <div class="note-tabs" role="tablist" aria-label="Choose an example day" hidden>
-            <button type="button" role="tab" class="note-tab" data-scene="calm" aria-selected="true">A calm day</button>
-            <button type="button" role="tab" class="note-tab" data-scene="missed" aria-selected="false">A missed medicine</button>
-            <button type="button" role="tab" class="note-tab" data-scene="fall" aria-selected="false">A fall</button>
-          </div>
-          <div id="demo-rows" class="note-rows" role="tabpanel" aria-live="polite">
-            <div class="note-row"><span class="note-icon ok"><span class="material-symbols-outlined" aria-hidden="true">wb_sunny</span></span><div><div class="note-label">Morning check-in</div><div class="note-value">All is well</div></div></div>
-            <div class="note-row"><span class="note-icon ok"><span class="material-symbols-outlined" aria-hidden="true">medication</span></span><div><div class="note-label">Medicines</div><div class="note-value">Taken, confirmed by voice</div></div></div>
-            <div class="note-row"><span class="note-icon info"><span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span></span><div><div class="note-label">Heart rate</div><div class="note-value">A trend, not a diagnosis</div></div></div>
-          </div>
-          <p class="note-foot">An example of the family dashboard, not live data.</p>
-        </div>
-      </div>
-
-      <aside class="auth-card" aria-label="Family account sign in">
-        <form id="auth-form" novalidate>
-          <h2 id="auth-title">Sign in</h2>
-          <p id="auth-sub">Only family members you’ve added can see your loved one’s health information.</p>
-          <div id="name-row" class="hidden field"><label class="field-label" for="name">Your name</label><input class="input" id="name" autocomplete="name"></div>
-          <div class="field"><label class="field-label" for="email">Email</label><input class="input" id="email" type="email" autocomplete="email"></div>
-          <div class="field"><label class="field-label" for="password">Password</label><input class="input" id="password" type="password" autocomplete="current-password"></div>
-          <p id="pw-hint" class="hidden">At least 8 characters.</p>
-          <p id="auth-error" class="hidden" role="alert"></p>
-          <button id="auth-submit" class="btn btn-primary" type="submit">Sign in</button>
-          <p class="form-note"><span class="material-symbols-outlined" aria-hidden="true">lock</span>Private to the family you invite.</p>
-        </form>
-      </aside>
-    </section>
-    </div>
-
-    <section class="section" id="story">
-      <div class="wrap story">
-        <div>
-          <h2>For the days you can’t be right there.</h2>
-          <p>Kamala is 78 and lives alone. Her son Rohan wants to know she’s doing okay, without making every day feel like a check-up.</p>
-          <p>SAGE quietly helps them stay connected: a gentle check-in, a reminder, and a family update when something seems out of the ordinary for Kamala.</p>
-        </div>
-        <p class="promise">Supportive, not intrusive. Family stays in control.</p>
-      </div>
-    </section>
-
-    <section class="section" id="features">
-      <div class="wrap">
-        <h2>Quiet support, when it matters.</h2>
-        <p class="section-lead">Useful signals and simple ways to stay connected, without pretending to replace a doctor.</p>
-        <div class="ledger">
-          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">personal_injury</span><h3>Fall detection</h3><p>The band looks for impact followed by stillness and sounds a siren on the band.</p></article>
-          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">sos</span><h3>SOS, with a safety net</h3><p>One press starts a 5-second cancel window, then alerts family. If nobody responds, it escalates to a backup contact, then emergency services. Family decides first.</p></article>
-          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">monitor_heart</span><h3>Everyday health trends</h3><p>Live heart rate and blood oxygen (SpO2) from the band, for trends and alerts, not diagnosis.</p></article>
-          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">record_voice_over</span><h3>Hindi and English voice help</h3><p>A bilingual voice assistant offers medicine reminders and a friendly morning check-in.</p></article>
-          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">insights</span><h3>Changes from their usual</h3><p>Notices routine changes, like missed reminders or slower replies, and suggests mentioning them to a doctor. It never diagnoses dementia.</p></article>
-          <article class="ledger-row"><span class="material-symbols-outlined" aria-hidden="true">menu_book</span><h3>Plain words, past weeks</h3><p>An AI care agent explains changes to family in plain language and remembers previous weeks. One account can look after several elders.</p></article>
+          <p id="pw-hint" class="field-hint" hidden>At least 8 characters.</p>
+          <p class="field-error" id="password-error" hidden></p>
         </div>
 
-        <!-- Try the SOS safety net: the escalation from the ledger above, played out step by step. -->
-        <div class="sos stage" id="sos">
-          <div class="sos-intro">
-            <h3>Try the SOS safety net</h3>
-            <p>Press the button the way Kamala would. Nothing is sent; this only shows the order things happen in.</p>
-            <div class="sos-controls" hidden>
-              <button type="button" id="sos-press" class="sos-press" aria-describedby="sos-status"><span class="material-symbols-outlined filled" aria-hidden="true">sos</span><span>Press SOS</span></button>
-              <button type="button" id="sos-cancel" class="btn btn-secondary" hidden>Cancel, I’m fine</button>
-              <button type="button" id="sos-respond" class="btn btn-secondary" hidden><span class="material-symbols-outlined" aria-hidden="true">check_circle</span>I’m checking on her</button>
-              <button type="button" id="sos-reset" class="btn btn-ghost" hidden>Start again</button>
-            </div>
-            <p id="sos-status" class="sos-status" role="status" aria-live="polite">One press starts a 5-second cancel window.</p>
-          </div>
-          <ol class="sos-steps" id="sos-steps">
-            <li data-step="cancel"><span class="sos-dot"><span class="sos-count" id="sos-count">5</span></span><div><strong>Cancel window</strong><span>5 seconds to cancel a press by mistake</span></div></li>
-            <li data-step="family"><span class="sos-dot"><span class="material-symbols-outlined" aria-hidden="true">family_restroom</span></span><div><strong>Family alerted</strong><span>The dashboard and the alarm sound</span></div></li>
-            <li data-step="backup"><span class="sos-dot"><span class="material-symbols-outlined" aria-hidden="true">contact_phone</span></span><div><strong>Backup contact</strong><span>If nobody in the family responds</span></div></li>
-            <li data-step="services"><span class="sos-dot"><span class="material-symbols-outlined" aria-hidden="true">local_hospital</span></span><div><strong>Emergency services</strong><span>Only if nobody responds at all</span></div></li>
-          </ol>
-        </div>
-      </div>
+        <p id="auth-error" class="form-error" role="alert" hidden></p>
+        <button id="auth-submit" class="btn btn-primary" type="submit"><span class="spinner" aria-hidden="true"></span><span id="auth-submit-label">Sign in</span></button>
+        <p class="form-note"><span class="material-symbols-outlined" aria-hidden="true">lock</span>Private to the family you invite. <a href="/privacy">Privacy policy</a></p>
+      </form>
     </section>
-
-    <section class="section" id="how-it-works">
-      <div class="wrap">
-        <h2>How it works</h2>
-        <p class="section-lead">A small, steady presence in the background of family life.</p>
-        <ol class="steps">
-          <li class="step"><h3>Wear the band</h3><p>Your loved one wears a simple wristband that can notice a fall, track health trends, and offer reminders.</p></li>
-          <li class="step"><h3>SAGE watches quietly</h3><p>It follows the agreed signals and usual routines, without recording or storing audio.</p></li>
-          <li class="step"><h3>Family is told what matters</h3><p>Family gets useful alerts and clear context in the dashboard, with the choice of what to do next.</p></li>
-        </ol>
-      </div>
-    </section>
-
-    <section class="section" id="privacy">
-      <div class="wrap privacy">
-        <div>
-          <h2>Care without listening in.</h2>
-          <p class="section-lead">SAGE is designed to support family care while respecting the person wearing the band.</p>
-        </div>
-        <ul class="privacy-points">
-          <li><span class="material-symbols-outlined" aria-hidden="true">mic_off</span><span>Audio is never recorded or stored.</span></li>
-          <li><span class="material-symbols-outlined" aria-hidden="true">check_circle</span><span>Only useful events, like “medicine taken,” are saved.</span></li>
-          <li><span class="material-symbols-outlined" aria-hidden="true">family_restroom</span><span>Family decides first if an SOS alert needs escalation.</span></li>
-          <li><span class="material-symbols-outlined" aria-hidden="true">payments</span><span>About ₹2,000 hardware cost. No subscription.</span></li>
-        </ul>
-      </div>
-    </section>
+    <p class="auth-back"><a href="/"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>Back to the SAGE home page</a></p>
   </main>
 
-  <footer class="wrap footer"><span class="wordmark">SAGE</span><span>Thoughtful support for the people who matter most.</span><span>Health trends and alerts are not a diagnosis.</span></footer>
+{% include "partials/site-footer.html" %}
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    let setup = false;
+    const label = $("auth-submit-label");
 
-  <script src="{{ url_for('static', filename='js/motion-kit.js') }}"></script>
-  <script>SageMotion.blurFade(".story > *, #features h2, #features .section-lead, .ledger-row, .sos, #how-it-works h2, #how-it-works .section-lead, .step, .privacy > div, .privacy-points li");</script>
-  <!-- React islands for the two demos (no build step). If these fail to load, the static markup stays. -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js" crossorigin></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js" crossorigin></script>
-  <script src="{{ url_for('static', filename='js/landing-react.js') }}"></script>
-  <script>
-  const $ = (id) => document.getElementById(id);
-  let setup = false;
-  function showError(msg) { $("auth-error").textContent = msg; $("auth-error").classList.toggle("hidden", !msg); }
-  fetch("/api/auth/status").then((r) => r.json()).then((s) => {
-    setup = s.needs_setup;
-    if (!setup) return;
-    $("auth-title").textContent = "Create the family account";
-    $("auth-sub").textContent = "This is the first time SAGE is being set up. The account you create here signs in to the dashboard.";
-    $("name-row").classList.replace("hidden", "flex");
-    $("pw-hint").classList.remove("hidden");
-    $("password").autocomplete = "new-password";
-    $("auth-submit").textContent = "Create account";
-  }).catch(() => showError("Can't reach the SAGE server. Check that app.py is running."));
-  $("auth-form").addEventListener("submit", async (e) => {
-    e.preventDefault(); showError("");
-    const body = { email: $("email").value.trim(), password: $("password").value };
-    if (setup) body.name = $("name").value.trim();
-    if (setup && !body.name) return showError("Enter your name."), $("name").focus();
-    if (!body.email) return showError("Enter your email address."), $("email").focus();
-    if (!body.password) return showError("Enter your password."), $("password").focus();
-    if (setup && body.password.length < 8) return showError("Use a password of at least 8 characters."), $("password").focus();
-    $("auth-submit").disabled = true; $("auth-submit").setAttribute("aria-busy", "true");
-    try {
-      const r = await fetch(setup ? "/api/auth/setup" : "/api/auth/login",
-        { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(d.error || "Couldn't sign in. Try again.");
-      location.href = "/patients";
-    } catch (err) { showError(err.message); $("auth-submit").disabled = false; $("auth-submit").removeAttribute("aria-busy"); }
-  });
-  </script>
-  <script>
-    (function(){var b=document.getElementById('theme-toggle');var i=document.getElementById('theme-icon');
-      function draw(){var dark=document.documentElement.getAttribute('data-theme')==='dark';var l=dark?'Switch to light theme':'Switch to dark theme';b.setAttribute('aria-label',l);b.title=l;i.textContent=dark?'light_mode':'dark_mode'}
-      b.addEventListener('click',function(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('sage-theme',t)}catch(e){}draw()});draw()})();
+    // ---- Form error states: one message per field, checked on blur, cleared as soon as it is fixed ----
+    const RULES = {
+      name: (v) => (setup && !v.trim() ? "Enter your name." : ""),
+      email: (v) => (!v.trim() ? "Enter your email address." : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) ? "That doesn’t look like an email address. Check for a typo." : ""),
+      password: (v) => (!v ? "Enter your password." : setup && v.length < 8 ? "Use at least 8 characters." : ""),
+    };
+    function setFieldError(id, msg) {
+      const input = $(id), err = $(id + "-error");
+      err.textContent = msg; err.hidden = !msg;
+      if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    }
+    const check = (id) => { const msg = RULES[id]($(id).value); setFieldError(id, msg); return !msg; };
+    ["name", "email", "password"].forEach((id) => {
+      $(id).addEventListener("blur", () => { if ($(id).value) check(id); });
+      $(id).addEventListener("input", () => { if ($(id).getAttribute("aria-invalid")) check(id); showError(""); });
+    });
+    function showError(msg) { $("auth-error").textContent = msg; $("auth-error").hidden = !msg; }
+
+    // ---- Show / hide password ----
+    $("pw-toggle").addEventListener("click", () => {
+      const show = $("password").type === "password";
+      $("password").type = show ? "text" : "password";
+      $("pw-toggle").setAttribute("aria-pressed", String(show));
+      $("pw-toggle").setAttribute("aria-label", show ? "Hide password" : "Show password");
+      $("pw-toggle").firstElementChild.textContent = show ? "visibility_off" : "visibility";
+    });
+
+    // ---- First run: the same form creates the family account ----
+    fetch("/api/auth/status").then((r) => r.json()).then((s) => {
+      setup = s.needs_setup;
+      if (!setup) return;
+      $("auth-title").textContent = "Create the family account";
+      $("auth-sub").textContent = "This is the first time SAGE is being set up. The account you create here signs in to the dashboard.";
+      $("name-row").hidden = false;
+      $("pw-hint").hidden = false;
+      $("password").autocomplete = "new-password";
+      label.textContent = "Create account";
+    }).catch(() => showError("Can’t reach the SAGE server right now. Check that app.py is running, then reload this page."));
+
+    // ---- Submit, with a loading state ----
+    function busy(on) {
+      $("auth-submit").disabled = on;
+      if (on) $("auth-submit").setAttribute("aria-busy", "true"); else $("auth-submit").removeAttribute("aria-busy");
+      label.textContent = on ? (setup ? "Creating account…" : "Signing in…") : (setup ? "Create account" : "Sign in");
+    }
+    $("auth-form").addEventListener("submit", async (e) => {
+      e.preventDefault(); showError("");
+      const order = setup ? ["name", "email", "password"] : ["email", "password"];
+      const bad = order.filter((id) => !check(id));
+      if (bad.length) { $(bad[0]).focus(); return; }
+      const body = { email: $("email").value.trim(), password: $("password").value };
+      if (setup) body.name = $("name").value.trim();
+      busy(true);
+      try {
+        const r = await fetch(setup ? "/api/auth/setup" : "/api/auth/login",
+          { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.error || "Couldn’t sign in just now. Try again in a moment.");
+        location.href = setup ? "/thank-you" : "/patients";
+      } catch (err) {
+        showError(err.message === "Failed to fetch" ? "Can’t reach the SAGE server right now. Check your connection and try again." : err.message);
+        busy(false);
+      }
+    });
+  })();
   </script>
 </body>
 </html>

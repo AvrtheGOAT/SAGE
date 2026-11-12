@@ -1,0 +1,22 @@
+{#- Public site header: wordmark left, a compact pill of section links in the middle (home page only),
+    theme toggle and the Sign in button right. Set show_nav = true on the home page. -#}
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap site-header-inner">
+      <a class="wordmark" href="/" aria-label="SAGE home"><span class="material-symbols-outlined filled" aria-hidden="true">favorite</span>SAGE</a>
+      {%- if show_nav %}
+      <nav class="nav-pill" aria-label="Sections">
+        <a href="#features">Features</a>
+        <a href="#sos">SOS demo</a>
+        <a href="#how-it-works">How it works</a>
+        <a href="#privacy">Privacy</a>
+      </nav>
+      {%- endif %}
+      <div class="top-actions">
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme"><span id="theme-icon" class="material-symbols-outlined" aria-hidden="true">dark_mode</span></button>
+        {%- if not hide_signin %}
+        <a class="pill pill-primary pill-sm" href="/login">Sign in</a>
+        {%- endif %}
+      </div>
+    </div>
+  </header>

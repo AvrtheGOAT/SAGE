@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+{% set title = "Page not found | SAGE" %}
+{% set description = "This page doesn’t exist. Go back to the SAGE home page or sign in to the family dashboard." %}
+{% set path = request.path %}
+{% set noindex = true %}
+{% include "partials/head.html" %}
+</head>
+<body class="auth-page stage">
+{% include "partials/site-header.html" %}
+
+  <main id="main" class="wrap lost">
+    <p class="lost-code" aria-hidden="true">404</p>
+    <h1>This page wandered off.</h1>
+    <p class="lost-lead">We couldn’t find <code>{{ request.path }}</code>. The link may be old, or the address may have a typo.</p>
+    <div class="hero-actions">
+      <a class="pill pill-primary" href="/"><span class="material-symbols-outlined" aria-hidden="true">home</span>Go to the home page</a>
+      <a class="pill pill-ghost" href="/patients">Open the family dashboard</a>
+    </div>
+  </main>
+
+{% include "partials/site-footer.html" %}
+</body>
+</html>

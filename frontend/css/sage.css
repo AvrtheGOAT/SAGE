@@ -13,7 +13,8 @@
   --line: 218 234 227; --line-strong: 186 210 201;
   --ink: 8 28 23; --ink-2: 52 79 71; --ink-3: 78 104 96; --ink-4: 186 210 201;
   --accent: 4 122 86; --accent-hover: 3 100 70; --on-accent: 250 255 252; --on-solid: 250 255 252; --on-status: 250 255 252;
-  --accent-2: 194 65 32; --glow: 16 185 129; --glow-2: 45 212 191;
+  --accent-2: 194 65 32; --glow: 16 185 129; --glow-2: 45 212 191; --glow-strength: .22;
+  --cta: 16 185 129; --on-cta: 3 33 22; --accent-display: 5 150 105;
   --ok: 20 120 57; --warn: 150 90 6; --danger: 200 30 60; --info: 3 105 161; --danger-solid: 200 30 60; --danger-solid-hover: 170 24 50;
   --ok-soft: rgb(220 247 231); --warn-soft: rgb(254 243 199); --danger-soft: rgb(255 228 232); --info-soft: rgb(224 242 254); --accent-soft: rgb(209 245 230);
   --scrim: 4 12 10;
@@ -22,6 +23,7 @@
 
   --font-display: "Plus Jakarta Sans", "Hanken Grotesk", system-ui, sans-serif;
   --font-body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-icon: "Material Symbols Outlined";
 
   --radius-element: 4px; --radius-control: 10px; --radius-component: 16px; --radius-container: 24px; --radius-pill: 999px;
   --ease: cubic-bezier(0.2, 0, 0, 1); --dur-micro: 160ms; --dur-short: 240ms;
@@ -32,14 +34,15 @@
   --color-ink: rgb(var(--ink)); --color-ink-2: rgb(var(--ink-2)); --color-muted: rgb(var(--ink-3));
   --color-rule: rgb(var(--line)); --color-accent: rgb(var(--accent)); --color-accent-ink: rgb(var(--on-accent)); --color-focus: rgb(var(--accent));
 }
-/* Dark tokens. .stage reuses them so the sign-in hero is the glowing night panel in either theme. */
-:root[data-theme="dark"], :root .stage {
+/* Dark tokens */
+:root[data-theme="dark"] {
   color-scheme: dark;
   --canvas: 7 15 13; --surface: 13 24 21; --inset: 10 20 17; --raise: 22 36 32;
   --line: 30 48 43; --line-strong: 48 72 65;
   --ink: 236 246 242; --ink-2: 168 190 183; --ink-3: 126 150 142; --ink-4: 78 100 93;
   --accent: 52 230 160; --accent-hover: 120 242 192; --on-accent: 3 33 22; --on-solid: 250 255 252; --on-status: 7 15 13;
-  --accent-2: 255 138 101; --glow: 16 185 129; --glow-2: 45 212 191;
+  --accent-2: 255 138 101; --glow: 16 185 129; --glow-2: 45 212 191; --glow-strength: .38;
+  --cta: 52 230 160; --on-cta: 3 33 22; --accent-display: 52 230 160;
   --ok: 74 222 128; --warn: 251 191 36; --danger: 255 125 140; --info: 94 200 250; --danger-solid: 220 38 74; --danger-solid-hover: 190 24 60;
   --ok-soft: rgb(var(--ok) / .13); --warn-soft: rgb(var(--warn) / .13); --danger-soft: rgb(var(--danger) / .14);
   --info-soft: rgb(var(--info) / .13); --accent-soft: rgb(var(--accent) / .13);
@@ -53,7 +56,7 @@
 /* App glow: the sign-in stage's mint light and faint grid, kept soft behind the dashboard and people list. */
 .app-glow { position: relative; isolation: isolate; }
 .app-glow::before, .app-glow::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-.app-glow::before { background: radial-gradient(45% 45% at 85% 8%, rgb(var(--glow) / .16), transparent 70%), radial-gradient(30% 35% at 20% 100%, rgb(var(--glow-2) / .08), transparent 70%); }
+.app-glow::before { background: radial-gradient(45% 45% at 85% 8%, rgb(var(--glow) / .16), transparent 70%), radial-gradient(30% 35% at 20% 100%, rgb(var(--glow) / .06), transparent 70%); }
 .app-glow::after {
   background-image: linear-gradient(rgb(var(--ink) / .035) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--ink) / .035) 1px, transparent 1px);
   background-size: 64px 64px; mask-image: radial-gradient(60% 50% at 80% 0%, currentColor, transparent 80%);
@@ -117,8 +120,8 @@ button, input, select, textarea { font: inherit; }
   background: rgb(var(--raise)); color: rgb(var(--ink-3)); border-color: rgb(var(--line)); cursor: not-allowed; transform: none;
 }
 .btn[aria-busy="true"] { cursor: progress; }
-.btn-primary { background: rgb(var(--accent)); color: rgb(var(--on-accent)); }
-.btn-primary:hover { background: rgb(var(--accent-hover)); }
+.btn-primary { background: rgb(var(--cta)); color: rgb(var(--on-cta)); }
+.btn-primary:hover { background: rgb(var(--cta) / .88); }
 .btn-secondary { background: rgb(var(--surface)); color: rgb(var(--ink)); border-color: rgb(var(--line-strong)); }
 .btn-secondary:hover { background: rgb(var(--raise)); }
 .btn-ghost { background: transparent; color: rgb(var(--ink-2)); }
@@ -202,11 +205,22 @@ textarea.input { padding: var(--space-sm) 12px; min-height: 72px; }
 
 /* Theme reveal (js/motion-kit.js): the new theme is uncovered by a circle, not cross-faded. */
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+/* Ink theme switch: the new theme shows through an ink blot that grows from the toggle (js/motion-kit.js). */
+.ink-reveal::view-transition-new(root) {
+  -webkit-mask-image: url("../img/ink-mask.svg"); mask-image: url("../img/ink-mask.svg");
+  -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+}
 
 /* Blur fade (js/motion-kit.js): only ever added by script, to sections still below the fold. */
-.blur-fade { transition: opacity calc(var(--dur-short) * 2) var(--ease), transform calc(var(--dur-short) * 2) var(--ease), filter calc(var(--dur-short) * 2) var(--ease); }
-.blur-fade.is-pending { opacity: 0; transform: translateY(12px); filter: blur(6px); }
+.blur-fade { transition: opacity calc(var(--dur-short) * 3) var(--ease), transform calc(var(--dur-short) * 3) var(--ease), filter calc(var(--dur-short) * 3) var(--ease); }
+.blur-fade.is-pending { opacity: 0; transform: translateY(var(--space-xl)); filter: blur(8px); }
+.blur-fade--calm.is-pending { transform: none; filter: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+/* Reduced motion keeps one gentle opacity fade on scroll (no movement), after the reset above. */
+@media (prefers-reduced-motion: reduce) {
+  .blur-fade--calm { transition-property: opacity !important; transition-duration: calc(var(--dur-short) * 2) !important; }
 }

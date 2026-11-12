@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+{% set title = "Privacy policy | SAGE" %}
+{% set description = "How SAGE collects, uses and protects the health and family information from the wristband and family dashboard. Audio is never recorded." %}
+{% set path = "/privacy" %}
+{% include "partials/head.html" %}
+</head>
+<body>
+{% include "partials/site-header.html" %}
+{#- Plain-language draft written from how the SAGE code actually works. Have it reviewed by a lawyer
+    (India's Digital Personal Data Protection Act, 2023) before a public launch. -#}
+  <main id="main" class="wrap doc">
+    <header class="doc-head">
+      <h1>Privacy policy</h1>
+      <p class="doc-meta">Last updated 11 November 2026</p>
+      <p class="doc-lead">SAGE helps a family look after an elder who lives alone. That means handling health information, so we keep this short and plain: what we collect, why, who else touches it, and what you can ask us to do.</p>
+    </header>
+
+    <nav class="doc-toc" aria-label="On this page">
+      <a href="#collect">What we collect</a><a href="#use">How we use it</a><a href="#share">Who else handles it</a>
+      <a href="#keep">How long we keep it</a><a href="#cookies">Cookies and analytics</a><a href="#rights">Your choices and rights</a><a href="#contact">Contact</a>
+    </nav>
+
+    <section id="collect">
+      <h2>What we collect</h2>
+      <ul>
+        <li><strong>Family account:</strong> your name, email address and password (stored only as a secure hash, never in plain text).</li>
+        <li><strong>The person you look after:</strong> the profile you enter, such as name, age, medicines, doctor and emergency contacts.</li>
+        <li><strong>From the wristband:</strong> heart rate, blood oxygen (SpO2), movement used to detect falls, SOS presses, and the band’s connection status.</li>
+        <li><strong>From the voice assistant:</strong> events such as “medicine taken” or “check-in answered”, and how quickly they were answered. <strong>Audio is never recorded or stored.</strong></li>
+        <li><strong>Reports you upload:</strong> files such as prescriptions or lab reports, up to 10 MB each.</li>
+        <li><strong>Alerts:</strong> what happened, when, and who responded.</li>
+      </ul>
+    </section>
+
+    <section id="use">
+      <h2>How we use it</h2>
+      <ul>
+        <li>To show the family dashboard and send alerts about falls, SOS presses and missed medicines.</li>
+        <li>To escalate an unanswered SOS to your backup contact and, if nobody responds, to emergency services.</li>
+        <li>To notice changes from the person’s usual routine and explain them in plain language. SAGE shows trends; it does not diagnose any condition.</li>
+        <li>To keep the service working and secure. We do not sell personal information or use it for advertising.</li>
+      </ul>
+    </section>
+
+    <section id="share">
+      <h2>Who else handles it</h2>
+      <p>We use a few service providers to run SAGE. They process data only on our instructions:</p>
+      <ul>
+        <li><strong>MongoDB Atlas</strong> stores the account, profile, readings, alerts and reports.</li>
+        <li><strong>Agent37</strong> runs the AI care agent that writes plain-language summaries from recent readings and events.</li>
+        <li><strong>ElevenLabs</strong> turns the assistant’s replies into speech. It receives the text being spoken, not recordings of the person.</li>
+        <li><strong>Nodus</strong> may run the missed-reminder pattern check on recent reminder records.</li>
+        <li><strong>A phone and SMS provider</strong> places escalation calls and messages when an SOS goes unanswered.</li>
+        <li><strong>Google Fonts, cdnjs and jsDelivr</strong> deliver fonts and code to your browser, so they see your IP address when pages load.</li>
+      </ul>
+      <p>We share information with emergency contacts and emergency services only to respond to an alert, or when the law requires it.</p>
+    </section>
+
+    <section id="keep">
+      <h2>How long we keep it</h2>
+      <p>We keep information while the family account is active, so the dashboard can show trends over past weeks. When you delete the account or ask us to, we delete the personal information within 30 days, unless the law requires us to keep part of it longer.</p>
+    </section>
+
+    <section id="cookies">
+      <h2>Cookies and analytics</h2>
+      <ul>
+        <li><strong>Sign-in cookie (always on):</strong> keeps you signed in for up to 7 days. SAGE can’t work without it.</li>
+        <li><strong>Settings on your device:</strong> your light or dark theme and your cookie choice are saved in your browser, not on our servers.</li>
+        <li><strong>Analytics (only if you allow it):</strong> on the public pages we may count visits with privacy-friendly analytics, and only after you choose “Allow analytics”. Nothing is measured on the family dashboard. You can change your choice any time from “Cookie settings” at the bottom of the page.</li>
+      </ul>
+    </section>
+
+    <section id="rights">
+      <h2>Your choices and rights</h2>
+      <p>You can ask to see, correct or delete the information we hold, or withdraw a consent you gave. If you look after someone else, please make sure they know about SAGE and agree to wear the band. To make a request, contact us below; we reply within 30 days.</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+      <p>Questions or requests about privacy:
+        {%- if contact_email %} <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
+        {%- else %} contact the team that set up your SAGE band.{% endif %}</p>
+    </section>
+  </main>
+
+{% include "partials/site-footer.html" %}
+</body>
+</html>

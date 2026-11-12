@@ -1,0 +1,21 @@
+  <footer class="site-footer">
+    <div class="wrap site-footer-inner">
+      <a class="wordmark" href="/" aria-label="SAGE home"><span class="material-symbols-outlined filled" aria-hidden="true">favorite</span>SAGE</a>
+      <p>Thoughtful support for the people who matter most. Health trends and alerts are not a diagnosis.</p>
+      <nav class="footer-links" aria-label="Legal">
+        <a href="/privacy">Privacy policy</a>
+        <a href="/terms">Terms and conditions</a>
+        {%- if analytics %}
+        <button type="button" class="link-btn" data-consent-open>Cookie settings</button>
+        {%- endif %}
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    (function(){var b=document.getElementById('theme-toggle');if(!b)return;var i=document.getElementById('theme-icon');
+      function draw(){var dark=document.documentElement.getAttribute('data-theme')==='dark';var l=dark?'Switch to light theme':'Switch to dark theme';b.setAttribute('aria-label',l);b.title=l;i.textContent=dark?'light_mode':'dark_mode'}
+      b.addEventListener('click',function(){var t=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',t);try{localStorage.setItem('sage-theme',t)}catch(e){}draw();document.dispatchEvent(new CustomEvent('sage:theme'))});draw()})();
+  </script>
+  <script src="{{ url_for('static', filename='js/motion-kit.js') }}"></script>
+{% include "partials/consent.html" %}
